@@ -7,3 +7,13 @@ services:
       - 5900:5900
     volumes:
       - /dev/shm:/dev/shm
+
+  mftf:
+    build: ./mftf
+    image: mftf:1.0
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
