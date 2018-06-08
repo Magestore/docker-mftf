@@ -12,6 +12,9 @@ services:
   mftf:
     build: ./mftf
     image: mftf:1.0
+    ports:
+      - 80:80
+      - 443:443
 
   mailhog:
     image: mailhog/mailhog
