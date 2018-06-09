@@ -21,6 +21,8 @@ DNS.2 = *.x.o
 DNS.3 = localhost
 DNS.4 = localhost.com
 DNS.5 = *.localhost.com
+IP.1 = 127.0.0.1
+IP.2 = 192.168.1.5
 ```
 
 ```sh
