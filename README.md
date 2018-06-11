@@ -7,6 +7,7 @@ sudo rm -rf db/mysql
 docker-compose -f docker-compose.yml -f docker-compose.build.yml build
 docker-compose -f docker-compose.yml -f docker-compose.build.yml up
 sudo docker-compose build
+sudo rm -rf db/mysql
 ```
 
 ## Run Services
