@@ -27,6 +27,11 @@ su "$APACHE_RUN_USER" -s /bin/bash -c "$MAGENTO_CMD"
 MAGENTO_CMD='php bin/magento setup:upgrade '
 su "$APACHE_RUN_USER" -s /bin/bash -c "$MAGENTO_CMD"
 
+# Update config for testing
+MAGENTO_CMD='php bin/magento config:set cms/wysiwyg/enabled disabled '
+MAGENTO_CMD+='&& php bin/magento config:set admin/security/admin_account_sharing 1 '
+su "$APACHE_RUN_USER" -s /bin/bash -c "$MAGENTO_CMD"
+
 # Compile for production mode
 if [ "$MAGENTO_DEV_MODE" ]; then
     MAGENTO_CMD="php bin/magento deploy:mode:set $MAGENTO_DEV_MODE"

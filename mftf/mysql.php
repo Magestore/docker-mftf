@@ -7,6 +7,5 @@ while (true) {
     exit();
   } catch (Exception $e) {
   }
-  echo 'Database is unavailable - sleeping';
   sleep(1);
 }
