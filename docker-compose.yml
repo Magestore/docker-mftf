@@ -8,6 +8,8 @@ services:
       - 5900:5900
     volumes:
       - /dev/shm:/dev/shm
+    networks:
+      - webnet
 
   mftf:
     build: ./mftf
@@ -15,9 +17,39 @@ services:
     ports:
       - 80:80
       - 443:443
+    networks:
+      webnet:
+        aliases:
+          - mftf.x.o
 
   mailhog:
     image: mailhog/mailhog
     ports:
       - 1025:1025
       - 8025:8025
+    networks:
+      - webnet
+
+  db:
+    image: percona
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: magento
+      MYSQL_DATABASE: magento
+    networks:
+      - webnet
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: magento
+    networks:
+      - webnet
+
+networks:
+  webnet:

@@ -1,4 +1,4 @@
-FROM selenium/standalone-chrome
+FROM selenium/standalone-chrome-debug
 
 RUN sudo apt-get update && sudo apt-get install -y libnss3-tools \
     && sudo apt-get clean \
