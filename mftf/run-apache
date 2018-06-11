@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Start apache2
+apache2-foreground

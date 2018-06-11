@@ -38,6 +38,18 @@ RUN set -ex \
     && su "$APACHE_RUN_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
     && rm magento.tar.bz2
 
+# SSL
+COPY server.crt /etc/ssl/certs/ssl-cert-snakeoil.pem
+COPY server.key /etc/ssl/private/ssl-cert-snakeoil.key
+RUN a2ensite default-ssl.conf
+
+# Run apache server script
+COPY run-apache /usr/local/bin/
+
+# Fix permission denied of execute files
+RUN chmod +x /usr/local/bin/docker-php-entrypoint
+RUN chmod +x /usr/local/bin/run-apache
+
 EXPOSE 80 443
 
 CMD ["run-apache"]
