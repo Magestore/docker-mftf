@@ -43,13 +43,15 @@ COPY server.crt /etc/ssl/certs/ssl-cert-snakeoil.pem
 COPY server.key /etc/ssl/private/ssl-cert-snakeoil.key
 RUN a2ensite default-ssl.conf
 
-# Run apache server script
-COPY run-apache /usr/local/bin/
-
 # Fix permission denied of execute files
 RUN chmod +x /usr/local/bin/docker-php-entrypoint
-RUN chmod +x /usr/local/bin/run-apache
 
+# Expose ports
 EXPOSE 80 443
+
+# Run apache server script
+COPY mysql.php mysql.php
+COPY run-apache /usr/local/bin/
+RUN chmod +x /usr/local/bin/run-apache
 
 CMD ["run-apache"]
