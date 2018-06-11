@@ -3,7 +3,7 @@ Docker images for Magento Functional Testing Framework (MFTF)
 
 ## Build Images
 ```sh
-rm -rf db/mysql
+sudo rm -rf db/mysql
 docker-compose -f docker-compose.yml -f docker-compose.build.yml build
 docker-compose -f docker-compose.yml -f docker-compose.build.yml up
 sudo docker-compose build
@@ -17,6 +17,11 @@ docker-compose up -d
 ## SSH
 ```sh
 docker exec -u {username} -it {container_name} /bin/bash
+```
+
+## Run Test
+After `ssh` to docker container `mftf` with username `www-data`
+```sh
 ```
 
 ## VNC Viewer

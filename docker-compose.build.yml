@@ -2,5 +2,6 @@ version: '3'
 services:
   db:
     build: ./percona
+    image: percona:db
     volumes:
       - ./db/mysql:/var/lib/mysql
