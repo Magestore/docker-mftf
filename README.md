@@ -30,6 +30,8 @@ vendor/bin/codecept run
 ```
 [https://devdocs.magento.com/guides/v2.2/magento-functional-testing-framework/release-2/getting-started.html](https://devdocs.magento.com/guides/v2.2/magento-functional-testing-framework/release-2/getting-started.html)
 
+[https://codeception.com/docs/02-GettingStarted](https://codeception.com/docs/02-GettingStarted)
+
 ## VNC Viewer
 ```sh
 vncviewer localhost:5900
