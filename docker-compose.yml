@@ -8,6 +8,7 @@ services:
       - 443:443
     volumes:
       - ./app/code:/var/www/html/app/code
+      - ./app/tests:/var/www/html/tests
     environment:
       BASE_URL: https://localhost.com/
       MAGENTO_DEV_MODE: developer

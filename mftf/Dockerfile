@@ -49,13 +49,6 @@ RUN chmod +x /usr/local/bin/docker-php-entrypoint
 # Expose ports
 EXPOSE 80 443
 
-# Run apache server script
-COPY mysql.php mysql.php
-COPY run-apache /usr/local/bin/
-RUN chmod +x /usr/local/bin/run-apache
-
-CMD ["run-apache"]
-
 # Test ENV
 WORKDIR dev/tests/acceptance
 RUN rm composer.lock \
@@ -83,3 +76,10 @@ COPY config.xml etc/config.xml
 # Back
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html
+
+# Run apache server script
+COPY mysql.php mysql.php
+COPY run-apache /usr/local/bin/
+RUN chmod +x /usr/local/bin/run-apache
+
+CMD ["run-apache"]

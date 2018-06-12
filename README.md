@@ -29,9 +29,10 @@ cd dev/tests/acceptance
 vendor/bin/robo generate:tests
 vendor/bin/codecept run
 ```
-[https://devdocs.magento.com/guides/v2.2/magento-functional-testing-framework/release-2/getting-started.html](https://devdocs.magento.com/guides/v2.2/magento-functional-testing-framework/release-2/getting-started.html)
 
-[https://codeception.com/docs/02-GettingStarted](https://codeception.com/docs/02-GettingStarted)
+[magento functional testing framework](https://devdocs.magento.com/guides/v2.2/magento-functional-testing-framework/release-2/getting-started.html)
+
+[codeception](https://codeception.com/docs/02-GettingStarted)
 
 ### Functional
 After `ssh` to docker container `mftf` with username `www-data`
@@ -42,7 +43,7 @@ php utils/generate.php
 vendor/bin/phpunit
 ```
 
-[https://devdocs.magento.com/guides/v2.2/mtf/mtf_quickstart/mtf_quickstart_runtest.html](https://devdocs.magento.com/guides/v2.2/mtf/mtf_quickstart/mtf_quickstart_runtest.html)
+[magento testing framework](https://devdocs.magento.com/guides/v2.2/mtf/mtf_quickstart/mtf_quickstart_runtest.html)
 
 ## VNC Viewer
 ```sh
