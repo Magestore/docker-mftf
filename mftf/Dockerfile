@@ -66,8 +66,9 @@ RUN set -ex \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
     'php /var/www/html/vendor/composer/composer/bin/composer install' \
     && su "$APACHE_RUN_USER" -s /bin/bash -c 'vendor/bin/robo build:project'
-RUN mv .htaccess.sample .htaccess
 COPY .env .env
+COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
+RUN mv .htaccess.sample .htaccess && update-ca-certificates
 
 # Back
 RUN rm -rf /var/www/.composer

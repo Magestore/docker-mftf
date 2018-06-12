@@ -24,7 +24,11 @@ docker exec -u {username} -it {container_name} /bin/bash
 After `ssh` to docker container `mftf` with username `www-data`
 ```sh
 docker exec -u www-data -it dockermftf_mftf_1 /bin/bash
+cd dev/tests/acceptance
+vendor/bin/robo generate:tests
+vendor/bin/codecept run
 ```
+[https://devdocs.magento.com/guides/v2.2/magento-functional-testing-framework/release-2/getting-started.html](https://devdocs.magento.com/guides/v2.2/magento-functional-testing-framework/release-2/getting-started.html)
 
 ## VNC Viewer
 ```sh
