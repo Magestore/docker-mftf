@@ -70,6 +70,16 @@ COPY .env .env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
 RUN mv .htaccess.sample .htaccess && update-ca-certificates
 
+# Functional Test
+WORKDIR /var/www/html/dev/tests/functional
+RUN set -ex \
+    && . "$APACHE_ENVVARS" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    'php /var/www/html/vendor/composer/composer/bin/composer install'
+RUN mv .htaccess.sample .htaccess
+COPY phpunit.xml phpunit.xml
+COPY config.xml etc/config.xml
+
 # Back
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html
