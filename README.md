@@ -45,6 +45,12 @@ vendor/bin/phpunit
 
 [magento testing framework](https://devdocs.magento.com/guides/v2.2/mtf/mtf_quickstart/mtf_quickstart_runtest.html)
 
+### API Functional
+```sh
+cd dev/tests/api-functional
+../functional/vendor/bin/phpunit
+```
+
 ## VNC Viewer
 ```sh
 vncviewer localhost:5900

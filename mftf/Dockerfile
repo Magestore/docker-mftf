@@ -73,6 +73,10 @@ RUN mv .htaccess.sample .htaccess
 COPY phpunit.xml phpunit.xml
 COPY config.xml etc/config.xml
 
+# API Functional
+COPY phpunit.api.xml ../api-functional/phpunit.xml
+COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
+
 # Back
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html

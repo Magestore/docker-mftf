@@ -2,6 +2,9 @@
 
 # Apache ENV
 source "$APACHE_ENVVARS"
+chown -f "$APACHE_RUN_USER"  \
+  app/code \
+  tests
 
 # Wait for database
 php mysql.php
