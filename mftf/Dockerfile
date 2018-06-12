@@ -55,3 +55,20 @@ COPY run-apache /usr/local/bin/
 RUN chmod +x /usr/local/bin/run-apache
 
 CMD ["run-apache"]
+
+# Test ENV
+WORKDIR dev/tests/acceptance
+RUN rm composer.lock \
+    && sed -i 's/git@github.com:/https:\/\/github.com\//g' composer.json
+RUN set -ex \
+    && . "$APACHE_ENVVARS" \
+    && chown $APACHE_RUN_USER /var/www \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    'php /var/www/html/vendor/composer/composer/bin/composer install' \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c 'vendor/bin/robo build:project'
+RUN mv .htaccess.sample .htaccess
+COPY .env .env
+
+# Back
+RUN rm -rf /var/www/.composer
+WORKDIR /var/www/html

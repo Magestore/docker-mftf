@@ -23,6 +23,7 @@ docker exec -u {username} -it {container_name} /bin/bash
 ## Run Test
 After `ssh` to docker container `mftf` with username `www-data`
 ```sh
+docker exec -u www-data -it dockermftf_mftf_1 /bin/bash
 ```
 
 ## VNC Viewer
