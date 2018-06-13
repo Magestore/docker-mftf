@@ -51,6 +51,14 @@ cd dev/tests/api-functional
 ../functional/vendor/bin/phpunit
 ```
 
+### Integration
+```sh
+apt-get update && apt-get install mysql-client
+
+cd dev/tests/integration
+../functional/vendor/bin/phpunit
+```
+
 ## VNC Viewer
 ```sh
 vncviewer localhost:5900

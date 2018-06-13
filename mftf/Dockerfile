@@ -77,6 +77,10 @@ COPY config.xml etc/config.xml
 COPY phpunit.api.xml ../api-functional/phpunit.xml
 COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
 
+# Integration
+COPY install-config-mysql.integration.php ../integration/etc/install-config-mysql.php
+COPY phpunit.integration.xml ../integration/phpunit.xml
+
 # Back
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html
