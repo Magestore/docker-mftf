@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="config.xsd">
+    <application>
+        <reopenBrowser>testCase</reopenBrowser>
+        <backendLogin>admin</backendLogin>
+        <backendPassword>admin123</backendPassword>
+        <appBackendUrl>https://localhost.com/admin/</appBackendUrl>
+        <backendLoginUrl>admin/auth/login</backendLoginUrl>
+    </application>
+    <isolation>
+        <resetUrlPath>dev/tests/functional/isolation.php</resetUrlPath>
+        <testSuite>none</testSuite>
+        <testCase>none</testCase>
+        <test>none</test>
+    </isolation>
+    <install>
+        <host>db</host>
+        <user>root</user>
+        <password>magento</password>
+        <dbName>magento</dbName>
+        <baseUrl>https://localhost.com/</baseUrl>
+        <backendName>admin</backendName>
+    </install>
+   <server>
+        <item name="selenium"
+              type="default"
+              browser="Google Chrome"
+              browserName="chrome"
+              host="selenium"
+              port="4444"
+              seleniumServerRequestsTimeout="90"
+              sessionStrategy="shared">
+            <desiredCapabilities>
+                <platform>ANY</platform>
+            </desiredCapabilities>
+            <item name="resolution" width="1366" height="768" />
+        </item>
+    </server>
+    <handler>
+        <webapi priority="0">
+            <token>integration_token</token>
+        </webapi>
+        <curl priority="1" />
+        <ui priority="2" />
+    </handler>
+</config>
