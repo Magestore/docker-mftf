@@ -25,7 +25,7 @@ sudo bin/build
 
 ### Run Services
 ```sh
-docker-compose up -d
+sudo bin/run
 ```
 
 ## SSH
