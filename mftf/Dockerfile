@@ -30,14 +30,6 @@ RUN cp /root/go/bin/mhsendmail /usr/bin/mhsendmail
 RUN echo 'sendmail_path = /usr/bin/mhsendmail --smtp-addr mailhog:1025' > /usr/local/etc/php/php.ini
 RUN echo 'memory_limit = -1' >> /usr/local/etc/php/php.ini
 
-# Magento
-COPY CE/2.2.4.tar.bz2 magento.tar.bz2
-RUN set -ex \
-    && . "$APACHE_ENVVARS" \
-    && rm "$APACHE_LOG_DIR"/* \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
-    && rm magento.tar.bz2
-
 # SSL
 COPY server.crt /etc/ssl/certs/ssl-cert-snakeoil.pem
 COPY server.key /etc/ssl/private/ssl-cert-snakeoil.key
@@ -48,6 +40,21 @@ RUN chmod +x /usr/local/bin/docker-php-entrypoint
 
 # Expose ports
 EXPOSE 80 443
+
+# Run apache server script
+COPY mysql.php mysql.php
+COPY run-apache /usr/local/bin/
+RUN chmod +x /usr/local/bin/run-apache
+
+CMD ["run-apache"]
+
+# Magento
+COPY CE/2.2.4.tar.bz2 magento.tar.bz2
+RUN set -ex \
+    && . "$APACHE_ENVVARS" \
+    && rm "$APACHE_LOG_DIR"/* \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
+    && rm magento.tar.bz2
 
 # Test ENV
 WORKDIR dev/tests/acceptance
@@ -84,10 +91,3 @@ COPY phpunit.integration.xml ../integration/phpunit.xml
 # Back
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html
-
-# Run apache server script
-COPY mysql.php mysql.php
-COPY run-apache /usr/local/bin/
-RUN chmod +x /usr/local/bin/run-apache
-
-CMD ["run-apache"]
