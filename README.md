@@ -1,18 +1,31 @@
 # Docker MFTF
 Docker images for Magento Functional Testing Framework (MFTF)
 
-## Build Images
+## Docker Service
+### Install
+[Docker](https://docs.docker.com/install/)
+[Docker Compose](https://docs.docker.com/compose/install/)
+
+**Note for Windows**
+To run command in Windows, please use linux simulator.
+
+For example, via `docker`
 ```sh
-sudo rm -rf db/mysql
-docker-compose -f docker-compose.yml -f docker-compose.build.yml build
-docker-compose -f docker-compose.yml -f docker-compose.build.yml up
-sudo docker-compose build
-sudo rm -rf db/mysql
+docker build -t compose .
+docker run --rm -it -v //var/run/docker.sock:/var/run/docker.sock \
+  -v $(pwd):/dockermftf -w /dockermftf --network host compose
 ```
 
-## Run Services
+Or use a virtual machine
+
+### Build Images
 ```sh
-docker-compose up -d
+sudo bin/build
+```
+
+### Run Services
+```sh
+sudo bin/run
 ```
 
 ## SSH

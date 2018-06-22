@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Clear cache database
+rm -rf db/mysql
+
+# Build and up to create database
+docker container prune -f
+docker-compose -f docker-compose.yml -f docker-compose.build.yml build
+docker-compose -f docker-compose.yml -f docker-compose.build.yml up -d
+
+# Wait service to start, then down the service
+until curl 127.0.1.1; do
+  sleep 10
+done
+docker-compose -f docker-compose.yml -f docker-compose.build.yml down
+
+# Build final image
+docker-compose build
+rm -rf db/mysql

@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Build app docker compose
+APP_FILE=app/docker-compose.yml
+cat > $APP_FILE <<COMPOSE
+version: '3'
+services:
+  mftf:
+    volumes:
+COMPOSE
+
+if [ -d "app/tests/acceptance" ]; then
+  TEST="tests/acceptance/tests/functional/Magento/FunctionalTest"
+  for EXTENSION in `ls app/$TEST`; do
+    if [ -d "app/$TEST/$EXTENSION" ]; then
+      echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
+        >> $APP_FILE
+    fi
+  done
+fi
+
+if [ -d "app/tests/functional" ]; then
+  TEST="tests/functional/tests/app/Magento"
+  for EXTENSION in `ls app/$TEST`; do
+    if [ -d "app/$TEST/$EXTENSION" ]; then
+      echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
+        >> $APP_FILE
+    fi
+  done
+fi
+
+# Run compose up
+docker-compose -f docker-compose.yml -f app/docker-compose.yml up -d
