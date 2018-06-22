@@ -9,7 +9,7 @@ docker-compose -f docker-compose.yml -f docker-compose.build.yml build
 docker-compose -f docker-compose.yml -f docker-compose.build.yml up -d
 
 # Wait service to start, then down the service
-until curl http://localhost/; do
+until curl 127.0.1.1; do
   sleep 10
 done
 docker-compose -f docker-compose.yml -f docker-compose.build.yml down
