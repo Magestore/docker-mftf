@@ -32,7 +32,12 @@ sudo bin/build
 
 ### Run Services
 ```sh
-sudo bin/run
+sudo bin/run up
+```
+
+Or run in background
+```sh
+sudo bin/run up -d
 ```
 
 ## SSH

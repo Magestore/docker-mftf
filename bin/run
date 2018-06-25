@@ -34,8 +34,8 @@ fi
 # Run compose up
 if [ -z "$APP_COMPOSE" ]; then
   # No test
-  docker-compose up -d
+  docker-compose $1 $2
 else
   # Run with test app compose
-  docker-compose -f docker-compose.yml -f app/docker-compose.yml up -d
+  docker-compose -f docker-compose.yml -f app/docker-compose.yml $1 $2
 fi
