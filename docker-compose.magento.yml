@@ -30,6 +30,8 @@ services:
     image: percona
     ports:
       - 3306:3306
+    volumes:
+      - ./db/magento/1.0:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento
