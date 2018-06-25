@@ -15,6 +15,7 @@ if [ -d "app/tests/acceptance" ]; then
     if [ -d "app/$TEST/$EXTENSION" ]; then
       echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
         >> $APP_FILE
+      APP_COMPOSE=1
     fi
   done
 fi
@@ -25,9 +26,16 @@ if [ -d "app/tests/functional" ]; then
     if [ -d "app/$TEST/$EXTENSION" ]; then
       echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
         >> $APP_FILE
+      APP_COMPOSE=1
     fi
   done
 fi
 
 # Run compose up
-docker-compose -f docker-compose.yml -f app/docker-compose.yml up -d
+if [ -z "$APP_COMPOSE" ]; then
+  # No test
+  docker-compose up -d
+else
+  # Run with test app compose
+  docker-compose -f docker-compose.yml -f app/docker-compose.yml up -d
+fi
