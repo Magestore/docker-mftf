@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# bin/magento version php
+# Example: bin/magento CE/2.2.4 7.1
+
+if [ -z "$1" ]; then
+  MAGENTO_VER='CE\/2.2.4'
+else
+  MAGENTO_VER="$(echo $1 | sed 's/\//\\\//')"
+fi
+
+if [ -z "$2" ]; then
+  PHP_VER=7.1
+else
+  PHP_VER=$2
+fi
+
+# Prepare Dockerfile
+cat mftf/Dockerfile.magento \
+  | sed "s/FROM php:7.1-apache/FROM php:$PHP_VER-apache/" \
+  | sed "s/CE\/2.2.4.tar.bz2/$MAGENTO_VER.tar.bz2/" \
+  > mftf/Dockerfile.magento.build
+
+# Prepare docker-compose
+MAGENTO_TAG="$(echo $MAGENTO_VER | sed 's/\\\//-/')"
+cat docker-compose.magento.yml \
+  | sed "s/Dockerfile.magento/Dockerfile.magento.build/" \
+  | sed "s/magento:1.0/magento:$MAGENTO_TAG/" \
+  | sed "s/magento\/1.0:/magento\/$MAGENTO_VER:/" \
+  > docker-compose.magento.build.yml
+
+# Run service
+docker container prune -f
+docker-compose -f docker-compose.magento.build.yml up

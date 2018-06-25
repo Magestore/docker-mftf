@@ -1,0 +1,53 @@
+version: '3'
+services:
+  magento:
+    build:
+      context: ./mftf
+      dockerfile: Dockerfile.magento
+    image: magento:1.0
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./app/code:/var/www/html/app/code
+    environment:
+      BASE_URL: https://localhost.com/
+      MAGENTO_DEV_MODE: developer
+    networks:
+      webnet:
+        aliases:
+          - localhost.com
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - webnet
+
+  db:
+    image: percona
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db/magento/1.0:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: magento
+      MYSQL_DATABASE: magento
+    networks:
+      - webnet
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: magento
+    networks:
+      - webnet
+
+networks:
+  webnet:

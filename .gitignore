@@ -1,2 +1,5 @@
 db/mysql/
+db/magento/
 app/
+mftf/Dockerfile.magento.build
+docker-compose.magento.build.yml
