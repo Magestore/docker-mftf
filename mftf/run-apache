@@ -33,6 +33,7 @@ su "$APACHE_RUN_USER" -s /bin/bash -c "$MAGENTO_CMD"
 # Update config for testing
 MAGENTO_CMD='php bin/magento config:set cms/wysiwyg/enabled disabled '
 MAGENTO_CMD+='&& php bin/magento config:set admin/security/admin_account_sharing 1 '
+MAGENTO_CMD+='&& php bin/magento config:set admin/captcha/enable 0 '
 su "$APACHE_RUN_USER" -s /bin/bash -c "$MAGENTO_CMD"
 
 # Compile for production mode
