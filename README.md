@@ -55,7 +55,7 @@ vendor/bin/robo generate:tests
 vendor/bin/codecept run
 ```
 
-[magento functional testing framework](https://devdocs.magento.com/guides/v2.2/magento-functional-testing-framework/release-2/getting-started.html)
+[magento functional testing framework](https://devdocs.magento.com/mftf/2.2/introduction.html)
 
 [codeception](https://codeception.com/docs/02-GettingStarted)
 
