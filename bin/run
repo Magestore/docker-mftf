@@ -18,6 +18,13 @@ if [ -d "app/tests/acceptance" ]; then
       APP_COMPOSE=1
     fi
   done
+
+  TEST="tests/acceptance/tests/functional/Magestore"
+  if [ -d "app/$TEST" ]; then
+    echo "      - ./app/$TEST:/var/www/html/dev/$TEST" \
+      >> $APP_FILE
+    APP_COMPOSE=1
+  fi
 fi
 
 if [ -d "app/tests/functional" ]; then
