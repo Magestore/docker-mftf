@@ -1,5 +1,9 @@
 version: '3'
 services:
+  mftf:
+    ports:
+      - 80:80
+      - 443:443
   db:
     build: ./percona
     image: percona:db

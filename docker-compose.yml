@@ -3,9 +3,6 @@ services:
   mftf:
     build: ./mftf
     image: mftf:1.0
-    ports:
-      - 80:80
-      - 443:443
     volumes:
       - ./app/code:/var/www/html/app/code
       # - ./app/pub/apps:/var/www/html/pub/apps
@@ -21,7 +18,6 @@ services:
     build: ./selenium
     image: selenium:1.0
     ports:
-      - 4444:4444
       - 5900:5900
     volumes:
       - /dev/shm:/dev/shm
@@ -30,17 +26,12 @@ services:
 
   mailhog:
     image: mailhog/mailhog
-    ports:
-      - 1025:1025
-      - 8025:8025
     networks:
       - webnet
 
   db:
     build: ./db
     image: db:1.0
-    ports:
-      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento
@@ -49,8 +40,6 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    ports:
-      - 8080:80
     environment:
       PMA_HOST: db
       PMA_USER: root
