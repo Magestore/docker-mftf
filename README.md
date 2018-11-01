@@ -4,8 +4,7 @@ Docker images for Magento Functional Testing Framework (MFTF)
 ## Docker Service
 ### Clone Repository
 ```sh
-git lfs install
-git clone -b develop https://github.com/davidmagestore/docker-mftf
+git clone -b 2.2.4 https://github.com/davidmagestore/docker-mftf
 cd docker-mftf
 ```
 
@@ -24,11 +23,6 @@ docker run --rm -it -v //var/run/docker.sock:/var/run/docker.sock \
 ```
 
 Or use a virtual machine
-
-### Build Images
-```sh
-sudo bin/build
-```
 
 ### Run Services
 ```sh
