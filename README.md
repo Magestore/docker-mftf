@@ -47,6 +47,8 @@ docker exec -u www-data -it dockermftf_mftf_1 /bin/bash
 cd dev/tests/acceptance
 vendor/bin/robo generate:tests
 vendor/bin/codecept run
+# Show Report
+cp tests/_output/allure-results/* /allure-results/
 ```
 
 [magento functional testing framework](https://devdocs.magento.com/mftf/2.2/introduction.html)
