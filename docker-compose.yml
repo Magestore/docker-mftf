@@ -6,6 +6,7 @@ services:
     volumes:
       - ./app/code:/var/www/html/app/code
       # - ./app/pub/apps:/var/www/html/pub/apps
+      - ./app/allure/allure-results:/allure-results
     environment:
       BASE_URL: https://localhost.com/
       MAGENTO_DEV_MODE: developer
@@ -44,6 +45,22 @@ services:
       PMA_HOST: db
       PMA_USER: root
       PMA_PASSWORD: magento
+    networks:
+      - webnet
+
+  allure:
+    build: ./allure
+    image: allure:1.0
+    volumes:
+      - ./app/allure/allure-results:/allure-results
+      - ./app/allure/allure-report:/allure-report
+    networks:
+      - webnet
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./app/allure/allure-report:/usr/share/nginx/html
     networks:
       - webnet
 
