@@ -20,7 +20,7 @@ For example, via `docker`
 ```sh
 docker build -t compose .
 docker run --rm -it -v //var/run/docker.sock:/var/run/docker.sock \
-  -v $(pwd):/dockermftf -w /dockermftf --network host compose
+  -v $(pwd):$(pwd) -w $(pwd) --network host compose
 ```
 
 Or use a virtual machine
@@ -42,14 +42,14 @@ sudo bin/run up -d
 
 ## SSH
 ```sh
-docker exec -u {username} -it {container_name} /bin/bash
+docker-compose exec -u {username} {service} /bin/bash
 ```
 
 ## Run Test
 ### Acceptance
 After `ssh` to docker container `mftf` with username `www-data`
 ```sh
-docker exec -u www-data -it dockermftf_mftf_1 /bin/bash
+docker-compose exec -u www-data mftf /bin/bash
 cd dev/tests/acceptance
 vendor/bin/robo generate:tests
 vendor/bin/codecept run
@@ -64,7 +64,7 @@ cp tests/_output/allure-results/* /allure-results/
 ### Functional
 After `ssh` to docker container `mftf` with username `www-data`
 ```sh
-docker exec -u www-data -it dockermftf_mftf_1 /bin/bash
+docker-compose exec -u www-data mftf /bin/bash
 cd dev/tests/functional
 php utils/generate.php
 vendor/bin/phpunit
