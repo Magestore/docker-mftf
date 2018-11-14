@@ -1,7 +1,7 @@
 version: '3'
 services:
   mftf:
-    image: davidmagestore/mftf:2.2.4
+    image: magestore/mftf:2.2.4
     volumes:
       - ./app/code:/var/www/html/app/code
       # - ./app/pub/apps:/var/www/html/pub/apps
@@ -15,7 +15,7 @@ services:
           - localhost.com
 
   selenium:
-    image: davidmagestore/mftf-selenium-chrome
+    image: magestore/mftf-selenium-chrome
     ports:
       - 5900:5900
     volumes:
@@ -29,7 +29,7 @@ services:
       - webnet
 
   db:
-    image: davidmagestore/mftf-db:2.2.4
+    image: magestore/mftf-db:2.2.4
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento
