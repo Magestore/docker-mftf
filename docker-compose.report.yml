@@ -1,0 +1,8 @@
+version: '3'
+services:
+  nginxreport:
+    image: nginx:alpine
+    ports:
+      - 8030:80
+    volumes:
+      - ./app/allure/allure-report:/usr/share/nginx/html
