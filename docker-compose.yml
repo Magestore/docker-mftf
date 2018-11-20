@@ -6,6 +6,7 @@ services:
       - ./app/code:/var/www/html/app/code
       # - ./app/pub/apps:/var/www/html/pub/apps
       - ./app/allure/allure-results:/allure-results
+      - ./app/.composer:/var/www/.composer
     environment:
       BASE_URL: https://localhost.com/
       MAGENTO_DEV_MODE: developer
