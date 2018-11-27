@@ -49,21 +49,5 @@ services:
     networks:
       - webnet
 
-  allure:
-    build: ./allure
-    image: allure:1.0
-    volumes:
-      - ./app/allure/allure-results:/allure-results
-      - ./app/allure/allure-report:/allure-report
-    networks:
-      - webnet
-
-  nginx:
-    image: nginx:alpine
-    volumes:
-      - ./app/allure/allure-report:/usr/share/nginx/html
-    networks:
-      - webnet
-
 networks:
   webnet:
