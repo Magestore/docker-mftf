@@ -49,7 +49,7 @@ RUN chmod +x /usr/local/bin/run-apache
 CMD ["run-apache"]
 
 # Magento
-COPY CE/2.2.4.tar.bz2 magento.tar.bz2
+COPY CE/2.3.0.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \
