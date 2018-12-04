@@ -25,6 +25,15 @@ if [ -d "app/tests/acceptance" ]; then
       >> $APP_FILE
     APP_COMPOSE=1
   fi
+
+  TEST="tests/api-functional/testsuite/Magento"
+  for EXTENSION in `ls app/$TEST`; do
+    if [ -d "app/$TEST/$EXTENSION" ]; then
+      echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
+        >> $APP_FILE
+      APP_COMPOSE=1
+    fi
+  done
 fi
 
 if [ -d "app/tests/functional" ]; then
