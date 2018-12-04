@@ -1,8 +1,22 @@
 version: '3'
 services:
+  allure:
+    build: ./allure
+    image: allure:1.0
+    volumes:
+      - ./app/allure/allure-results:/allure-results
+      - ./app/allure/allure-report:/allure-report
+    networks:
+      - webnet
+
   nginxreport:
     image: nginx:alpine
     ports:
       - 8030:80
     volumes:
       - ./app/allure/allure-report:/usr/share/nginx/html
+    networks:
+      - webnet
+
+networks:
+  webnet:
