@@ -1,8 +1,7 @@
-FROM php:7.1-apache
+FROM php:7.2.13-apache
 
 # php extensions to run Magento
 RUN apt-get update && apt-get install -y \
-        libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng-dev \
@@ -11,9 +10,11 @@ RUN apt-get update && apt-get install -y \
         zlib1g-dev \
         curl \
         git \
-    && docker-php-ext-install -j$(nproc) mcrypt xsl intl pdo_mysql soap zip opcache bcmath \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && pecl install mcrypt-1.0.1 \
+    && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath \
+    && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-enable mcrypt \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
