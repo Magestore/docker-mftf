@@ -36,15 +36,5 @@ MAGENTO_CMD+='&& php bin/magento config:set admin/security/admin_account_sharing
 MAGENTO_CMD+='&& php bin/magento config:set admin/captcha/enable 0 '
 su "$APACHE_RUN_USER" -s /bin/bash -c "$MAGENTO_CMD"
 
-# Compile for production mode
-if [ "$MAGENTO_DEV_MODE" ]; then
-    MAGENTO_CMD="php bin/magento deploy:mode:set $MAGENTO_DEV_MODE"
-else
-    MAGENTO_CMD='php bin/magento deploy:mode:set production -s '
-    MAGENTO_CMD+='&& php bin/magento setup:static-content:deploy '
-    MAGENTO_CMD+='&& php bin/magento setup:di:compile '
-fi
-su "$APACHE_RUN_USER" -s /bin/bash -c "$MAGENTO_CMD"
-
 # Start apache2
 apache2-foreground
