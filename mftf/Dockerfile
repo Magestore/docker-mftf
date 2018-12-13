@@ -16,9 +16,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath \
     && docker-php-ext-configure gd --with-gd --enable-shared \
         --with-jpeg-dir=/usr/include/ \
-        --with-zlib-dir=/usr/include/ \
+        --with-zlib-dir=/lib/x86_64-linux-gnu \
         --with-png-dir=/usr/include/ \
-        --with-freetype-dir=/usr/include/ \
+        --with-freetype-dir=/usr/lib/x86_64-linux-gnu \
         --with-t1lib --enable-gd-native-ttf \
         #--with-freetype \
     && docker-php-ext-install -j$(nproc) gd \
