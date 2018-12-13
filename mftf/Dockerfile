@@ -3,6 +3,7 @@ FROM php:7.2.13-apache
 # php extensions to run Magento
 RUN apt-get update && apt-get install -y \
         libjpeg62-turbo-dev \
+        libfreetype6-dev \
         libmcrypt-dev \
         libpng-dev \
         libxslt1-dev \
@@ -10,9 +11,16 @@ RUN apt-get update && apt-get install -y \
         zlib1g-dev \
         curl \
         git \
+        unzip \
     && pecl install mcrypt-1.0.1 \
     && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath \
-    && docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-gd --enable-shared \
+        --with-jpeg-dir=/usr/include/ \
+        --with-zlib-dir=/usr/include/ \
+        --with-png-dir=/usr/include/ \
+        --with-freetype-dir=/usr/include/ \
+        --with-t1lib --enable-gd-native-ttf \
+        #--with-freetype \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable mcrypt \
     && apt-get clean \
@@ -57,19 +65,23 @@ RUN set -ex \
     && su "$APACHE_RUN_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
     && rm magento.tar.bz2
 
-# Test ENV
-WORKDIR dev/tests/acceptance
-RUN rm composer.lock \
-    && sed -i 's/git@github.com:/https:\/\/github.com\//g' composer.json
+# Prepare acceptance test
+WORKDIR /var/www/html
+RUN rm dev/tests/acceptance/composer.lock \
+    && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && chown $APACHE_RUN_USER /var/www \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
-    'php /var/www/html/vendor/composer/composer/bin/composer install' \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c 'vendor/bin/robo build:project'
-COPY .env .env
+    'php vendor/composer/composer/bin/composer install -d dev/tests/acceptance/' \
+    #&& su "$APACHE_RUN_USER" -s /bin/bash -c \
+    #'php vendor/composer/composer/bin/composer require magento/magento2-functional-testing-framework' \
+    && chown -R "$APACHE_RUN_USER" vendor/bin dev/tests/acceptance \
+    && chmod -R +x vendor/bin
+    #&& su "$APACHE_RUN_USER" -s /bin/bash -c 'vendor/bin/mftf build:project'
+COPY .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
-RUN mv .htaccess.sample .htaccess && update-ca-certificates
+RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
 
 # Functional Test
 WORKDIR /var/www/html/dev/tests/functional
