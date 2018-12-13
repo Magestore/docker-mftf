@@ -66,7 +66,8 @@ CMD ["run-apache"]
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \
-    && mkdir -p /var/www/html && git clone https://github.com/magento/magento2.git /var/www/html \
+    && rm -rf /var/www/html && mkdir -p /var/www \
+    && cd /var/www && git clone https://github.com/magento/magento2.git html \
     && cd /var/www/html && git checkout 2.3-develop \
     && chown -R "$APACHE_RUN_USER" /var/www/html
 
