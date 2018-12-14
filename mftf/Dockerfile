@@ -81,7 +81,9 @@ RUN set -ex \
 
 # Prepare acceptance test
 WORKDIR /var/www/html
-RUN su "$APACHE_RUN_USER" -s /bin/bash -c \
+RUN set -ex \
+    && . "$APACHE_ENVVARS" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
     "echo '{ \
         \"http-basic\": { \
             \"repo.magento.com\": { \
