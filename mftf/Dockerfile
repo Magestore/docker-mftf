@@ -71,7 +71,7 @@ CMD ["run-apache"]
 #    && cd /var/www/html && git checkout 2.3-develop \
 #    && chown -R "$APACHE_RUN_USER" /var/www/html
 
-# Magento
+# Prepare Magento 2.3 downloaded from magento released
 COPY CE/2.3.0.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
@@ -81,7 +81,18 @@ RUN set -ex \
 
 # Prepare acceptance test
 WORKDIR /var/www/html
-RUN rm dev/tests/acceptance/composer.lock \
+RUN su "$APACHE_RUN_USER" -s /bin/bash -c \
+    "echo '{ \
+        \"http-basic\": { \
+            \"repo.magento.com\": { \
+                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
+                \"password\": \"cfe4874a50552827da901971d249322a\" \
+            } \
+        } \
+    }' > auth.json" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    " composer require magento/magento2-functional-testing-framework" \
+    && rm dev/tests/acceptance/composer.lock \
     && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
         " composer install && composer install -d dev/tests/acceptance/" \
