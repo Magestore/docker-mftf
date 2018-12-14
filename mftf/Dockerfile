@@ -63,13 +63,21 @@ CMD ["run-apache"]
 
 
 # Prepare Magento 2.3-develop
+#RUN set -ex \
+#    && . "$APACHE_ENVVARS" \
+#    && rm "$APACHE_LOG_DIR"/* \
+#    && rm -rf /var/www/html && mkdir -p /var/www \
+#    && cd /var/www && git clone https://github.com/magento/magento2.git html \
+#    && cd /var/www/html && git checkout 2.3-develop \
+#    && chown -R "$APACHE_RUN_USER" /var/www/html
+
+# Magento
+COPY CE/2.3.0.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \
-    && rm -rf /var/www/html && mkdir -p /var/www \
-    && cd /var/www && git clone https://github.com/magento/magento2.git html \
-    && cd /var/www/html && git checkout 2.3-develop \
-    && chown -R "$APACHE_RUN_USER" /var/www/html
+    && su "$APACHE_RUN_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
+    && rm magento.tar.bz2
 
 # Prepare acceptance test
 WORKDIR /var/www/html
