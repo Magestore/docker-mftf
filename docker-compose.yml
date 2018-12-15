@@ -17,8 +17,8 @@ services:
 
   selenium:
     image: magestore/mftf-selenium-chrome
-    ports:
-      - 5900:5900
+    #ports:
+    #  - 5900:5900
     volumes:
       - /dev/shm:/dev/shm
     networks:
