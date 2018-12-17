@@ -3,6 +3,8 @@
 # Build app docker compose
 APP_FILE=app/docker-compose.yml
 APP_FILE_VOLUME=app/docker-compose.volumes
+echo -n > $APP_FILE_VOLUME
+
 cat > $APP_FILE <<COMPOSE
 version: '3'
 services:
