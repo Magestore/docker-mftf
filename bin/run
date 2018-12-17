@@ -53,8 +53,6 @@ fi
 cat $APP_FILE_VOLUME >> $APP_FILE
 
 cat >> $APP_FILE <<COMPOSE
-version: '3'
-services:
   functional:
     volumes:
 COMPOSE
