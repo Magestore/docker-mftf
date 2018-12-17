@@ -10,9 +10,10 @@ services:
       - webnet
 
   nginxreport:
+    container_name: nginxreport
     image: nginx:alpine
     ports:
-      - 8030:80
+      - 8001-8031:80
     volumes:
       - ./app/allure/allure-report:/usr/share/nginx/html
     networks:
