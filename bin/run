@@ -2,6 +2,7 @@
 
 # Build app docker compose
 APP_FILE=app/docker-compose.yml
+APP_FILE_VOLUME=app/docker-compose.volumes
 cat > $APP_FILE <<COMPOSE
 version: '3'
 services:
@@ -14,7 +15,7 @@ if [ -d "app/tests/acceptance" ]; then
   for EXTENSION in `ls app/$TEST`; do
     if [ -d "app/$TEST/$EXTENSION" ]; then
       echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
-        >> $APP_FILE
+        >> $APP_FILE_VOLUME
       APP_COMPOSE=1
     fi
   done
@@ -22,7 +23,7 @@ if [ -d "app/tests/acceptance" ]; then
   TEST="tests/acceptance/tests/functional/Magestore"
   if [ -d "app/$TEST" ]; then
     echo "      - ./app/$TEST:/var/www/html/dev/$TEST" \
-      >> $APP_FILE
+      >> $APP_FILE_VOLUME
     APP_COMPOSE=1
   fi
 
@@ -30,7 +31,7 @@ if [ -d "app/tests/acceptance" ]; then
   for EXTENSION in `ls app/$TEST`; do
     if [ -d "app/$TEST/$EXTENSION" ]; then
       echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
-        >> $APP_FILE
+        >> $APP_FILE_VOLUME
       APP_COMPOSE=1
     fi
   done
@@ -41,11 +42,22 @@ if [ -d "app/tests/functional" ]; then
   for EXTENSION in `ls app/$TEST`; do
     if [ -d "app/$TEST/$EXTENSION" ]; then
       echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
-        >> $APP_FILE
+        >> $APP_FILE_VOLUME
       APP_COMPOSE=1
     fi
   done
 fi
+
+cat $APP_FILE_VOLUME >> $APP_FILE
+
+cat >> $APP_FILE <<COMPOSE
+version: '3'
+services:
+  functional:
+    volumes:
+COMPOSE
+
+cat $APP_FILE_VOLUME >> $APP_FILE
 
 # Run compose up
 if [ -z "$APP_COMPOSE" ]; then

@@ -15,6 +15,20 @@ services:
         aliases:
           - localhost.com
 
+  functional:
+    image: magestore/mftf:2.2.4
+    volumes:
+      - ./app/code:/var/www/html/app/code
+      - ./app/allure/allure-results:/allure-results
+      - ./app/.composer:/var/www/.composer
+    environment:
+      BASE_URL: https://localhost2.com/
+      MAGENTO_DEV_MODE: developer
+    networks:
+      webnet:
+        aliases:
+          - localhost2.com
+
   selenium:
     image: magestore/mftf-selenium-chrome
     #ports:
