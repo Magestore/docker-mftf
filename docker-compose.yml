@@ -28,6 +28,8 @@ services:
       webnet:
         aliases:
           - localhost2.com
+    entrypoint:
+      - apache2-foreground
 
   selenium:
     image: magestore/mftf-selenium-chrome
