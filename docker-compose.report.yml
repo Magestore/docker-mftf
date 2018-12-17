@@ -10,7 +10,6 @@ services:
       - webnet
 
   nginxreport:
-    container_name: nginxreport
     image: nginx:alpine
     ports:
       - 8001-8031:80
