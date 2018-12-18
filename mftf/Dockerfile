@@ -109,7 +109,7 @@ RUN set -x \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 						$nginxPackages \
 						gettext-base \
-	&& apt-get remove --purge --auto-remove -y apt-transport-https ca-certificates && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/nginx.list \
+	&& rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/nginx.list \
 	\
 # if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
 	&& if [ -n "$tempDir" ]; then \
@@ -125,6 +125,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # END Install Nginx
+
 
 # Install composer
 RUN curl https://getcomposer.org/installer -o composer-setup.php \
