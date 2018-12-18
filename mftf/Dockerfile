@@ -155,6 +155,9 @@ COPY mysql.php mysql.php
 COPY run-nginx /usr/local/bin/
 RUN chmod +x /usr/local/bin/run-nginx
 
+
+WORKDIR /var/www/html
+
 # Prepare Magento 2.3 downloaded from magento released
 COPY CE/2.3.0.tar.bz2 magento.tar.bz2
 RUN set -ex \
@@ -162,7 +165,6 @@ RUN set -ex \
     && rm magento.tar.bz2
 
 # Prepare acceptance test
-WORKDIR /var/www/html
 RUN set -ex \
     && su "$WEB_USER" -s /bin/bash -c \
     "echo '{ \
