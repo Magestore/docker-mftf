@@ -143,7 +143,6 @@ RUN echo 'memory_limit = -1' >> /usr/local/etc/php/php.ini
 # SSL
 COPY server.crt /etc/ssl/certs/ssl-cert-snakeoil.pem
 COPY server.key /etc/ssl/private/ssl-cert-snakeoil.key
-RUN a2ensite default-ssl.conf
 
 # Fix permission denied of execute files
 RUN chmod +x /usr/local/bin/docker-php-entrypoint
