@@ -1,4 +1,13 @@
-FROM php:7.2.13-apache
+FROM php:7.1.25-fpm
+
+LABEL maintainer="Tit <mrthinlt@gmail.com>"
+
+ENV WEB_USER www-data
+ENV WEB_GROUP www-data
+
+# Nginx env
+ENV NGINX_VERSION 1.15.7-1~stretch
+ENV NJS_VERSION   1.15.7.0.2.6-1~stretch
 
 # php extensions to run Magento
 RUN apt-get update && apt-get install -y \
@@ -24,16 +33,104 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Nginx
+RUN set -x \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y gnupg1 apt-transport-https ca-certificates \
+	&& \
+	NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
+	found=''; \
+	for server in \
+		ha.pool.sks-keyservers.net \
+		hkp://keyserver.ubuntu.com:80 \
+		hkp://p80.pool.sks-keyservers.net:80 \
+		pgp.mit.edu \
+	; do \
+		echo "Fetching GPG key $NGINX_GPGKEY from $server"; \
+		apt-key adv --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; \
+	done; \
+	test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
+	apt-get remove --purge --auto-remove -y gnupg1 && rm -rf /var/lib/apt/lists/* \
+	&& dpkgArch="$(dpkg --print-architecture)" \
+	&& nginxPackages=" \
+		nginx=${NGINX_VERSION} \
+		nginx-module-xslt=${NGINX_VERSION} \
+		nginx-module-geoip=${NGINX_VERSION} \
+		nginx-module-image-filter=${NGINX_VERSION} \
+		nginx-module-njs=${NJS_VERSION} \
+	" \
+	&& case "$dpkgArch" in \
+		amd64|i386) \
+# arches officialy built by upstream
+			echo "deb https://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list.d/nginx.list \
+			&& apt-get update \
+			;; \
+		*) \
+# we're on an architecture upstream doesn't officially build for
+# let's build binaries from the published source packages
+			echo "deb-src https://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list.d/nginx.list \
+			\
+# new directory for storing sources and .deb files
+			&& tempDir="$(mktemp -d)" \
+			&& chmod 777 "$tempDir" \
+# (777 to ensure APT's "_apt" user can access it too)
+			\
+# save list of currently-installed packages so build dependencies can be cleanly removed later
+			&& savedAptMark="$(apt-mark showmanual)" \
+			\
+# build .deb files from upstream's source packages (which are verified by apt-get)
+			&& apt-get update \
+			&& apt-get build-dep -y $nginxPackages \
+			&& ( \
+				cd "$tempDir" \
+				&& DEB_BUILD_OPTIONS="nocheck parallel=$(nproc)" \
+					apt-get source --compile $nginxPackages \
+			) \
+# we don't remove APT lists here because they get re-downloaded and removed later
+			\
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+# (which is done after we install the built packages so we don't have to redownload any overlapping dependencies)
+			&& apt-mark showmanual | xargs apt-mark auto > /dev/null \
+			&& { [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; } \
+			\
+# create a temporary local APT repo to install from (so that dependency resolution can be handled by APT, as it should be)
+			&& ls -lAFh "$tempDir" \
+			&& ( cd "$tempDir" && dpkg-scanpackages . > Packages ) \
+			&& grep '^Package: ' "$tempDir/Packages" \
+			&& echo "deb [ trusted=yes ] file://$tempDir ./" > /etc/apt/sources.list.d/temp.list \
+# work around the following APT issue by using "Acquire::GzipIndexes=false" (overriding "/etc/apt/apt.conf.d/docker-gzip-indexes")
+#   Could not open file /var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages - open (13: Permission denied)
+#   ...
+#   E: Failed to fetch store:/var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages  Could not open file /var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages - open (13: Permission denied)
+			&& apt-get -o Acquire::GzipIndexes=false update \
+			;; \
+	esac \
+	\
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+						$nginxPackages \
+						gettext-base \
+	&& apt-get remove --purge --auto-remove -y apt-transport-https ca-certificates && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/nginx.list \
+	\
+# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+	&& if [ -n "$tempDir" ]; then \
+		apt-get purge -y --auto-remove \
+		&& rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
+	fi
+
+# forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
+
+# Copy nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# END Install Nginx
+
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
     && php composer-setup.php --install-dir=/usr/local/bin/ --filename=composer \
     && php -r "unlink('composer-setup.php');"
-
-# Enable apache modes
-RUN a2enmod rewrite
-RUN a2enmod headers
-RUN a2enmod ssl
 
 # Mailhog
 RUN curl -Lsf 'https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz' | tar -C '/usr/local' -xvzf -
@@ -56,34 +153,19 @@ EXPOSE 80 443
 
 # Run apache server script
 COPY mysql.php mysql.php
-COPY run-apache /usr/local/bin/
-RUN chmod +x /usr/local/bin/run-apache
-
-CMD ["run-apache"]
-
-
-# Prepare Magento 2.3-develop
-#RUN set -ex \
-#    && . "$APACHE_ENVVARS" \
-#    && rm "$APACHE_LOG_DIR"/* \
-#    && rm -rf /var/www/html && mkdir -p /var/www \
-#    && cd /var/www && git clone https://github.com/magento/magento2.git html \
-#    && cd /var/www/html && git checkout 2.3-develop \
-#    && chown -R "$APACHE_RUN_USER" /var/www/html
+COPY run-nginx /usr/local/bin/
+RUN chmod +x /usr/local/bin/run-nginx
 
 # Prepare Magento 2.3 downloaded from magento released
 COPY CE/2.3.0.tar.bz2 magento.tar.bz2
 RUN set -ex \
-    && . "$APACHE_ENVVARS" \
-    && rm "$APACHE_LOG_DIR"/* \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
+    && su "$WEB_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
     && rm magento.tar.bz2
 
 # Prepare acceptance test
 WORKDIR /var/www/html
 RUN set -ex \
-    && . "$APACHE_ENVVARS" \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    && su "$WEB_USER" -s /bin/bash -c \
     "echo '{ \
         \"http-basic\": { \
             \"repo.magento.com\": { \
@@ -92,14 +174,14 @@ RUN set -ex \
             } \
         } \
     }' > auth.json" \
-    && echo "Apache run user $APACHE_RUN_USER" \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    && echo "PHP-FPM run user $WEB_USER" \
+    && su "$WEB_USER" -s /bin/bash -c \
         " composer require magento/magento2-functional-testing-framework" \
     && rm dev/tests/acceptance/composer.lock \
     && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    && su "$WEB_USER" -s /bin/bash -c \
         " composer install && composer install -d dev/tests/acceptance/" \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    && su "$WEB_USER" -s /bin/bash -c \
         " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
 
 COPY .env dev/tests/acceptance/.env
@@ -109,8 +191,7 @@ RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && u
 # Functional Test
 WORKDIR /var/www/html/dev/tests/functional
 RUN set -ex \
-    && . "$APACHE_ENVVARS" \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    && su "$WEB_USER" -s /bin/bash -c \
     'php /var/www/html/vendor/composer/composer/bin/composer install'
 RUN mv .htaccess.sample .htaccess
 COPY phpunit.xml phpunit.xml
@@ -127,3 +208,7 @@ COPY phpunit.integration.xml ../integration/phpunit.xml
 # Back
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html
+
+STOPSIGNAL SIGTERM
+
+CMD ["run-nginx"]

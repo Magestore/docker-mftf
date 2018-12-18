@@ -24,6 +24,12 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
+    && php composer-setup.php --install-dir=/usr/local/bin/ --filename=composer \
+    && php -r "unlink('composer-setup.php');"
+
 # Enable apache modes
 RUN a2enmod rewrite
 RUN a2enmod headers
@@ -55,7 +61,17 @@ RUN chmod +x /usr/local/bin/run-apache
 
 CMD ["run-apache"]
 
-# Magento
+
+# Prepare Magento 2.3-develop
+#RUN set -ex \
+#    && . "$APACHE_ENVVARS" \
+#    && rm "$APACHE_LOG_DIR"/* \
+#    && rm -rf /var/www/html && mkdir -p /var/www \
+#    && cd /var/www && git clone https://github.com/magento/magento2.git html \
+#    && cd /var/www/html && git checkout 2.3-develop \
+#    && chown -R "$APACHE_RUN_USER" /var/www/html
+
+# Prepare Magento 2.3 downloaded from magento released
 COPY CE/2.3.0.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
@@ -65,18 +81,27 @@ RUN set -ex \
 
 # Prepare acceptance test
 WORKDIR /var/www/html
-RUN rm dev/tests/acceptance/composer.lock \
-    && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
-    && chown $APACHE_RUN_USER /var/www \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
-    'php vendor/composer/composer/bin/composer install -d dev/tests/acceptance/' \
-    #&& su "$APACHE_RUN_USER" -s /bin/bash -c \
-    #'php vendor/composer/composer/bin/composer require magento/magento2-functional-testing-framework' \
-    && chown -R "$APACHE_RUN_USER" vendor/bin dev/tests/acceptance \
-    && chmod -R +x vendor/bin
-    #&& su "$APACHE_RUN_USER" -s /bin/bash -c 'vendor/bin/mftf build:project'
+    "echo '{ \
+        \"http-basic\": { \
+            \"repo.magento.com\": { \
+                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
+                \"password\": \"cfe4874a50552827da901971d249322a\" \
+            } \
+        } \
+    }' > auth.json" \
+    && echo "Apache run user $APACHE_RUN_USER" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " composer require magento/magento2-functional-testing-framework" \
+    && rm dev/tests/acceptance/composer.lock \
+    && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " composer install && composer install -d dev/tests/acceptance/" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
+
 COPY .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
 RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
