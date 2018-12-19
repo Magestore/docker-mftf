@@ -38,4 +38,4 @@ su "$WEB_USER" -s /bin/bash -c "$MAGENTO_CMD"
 # Start php-fpm
 php-fpm -y /usr/local/etc/php-fpm.conf -D
 # Start nginx
-nginx -g "daemon off"
+nginx -g "daemon off;"
