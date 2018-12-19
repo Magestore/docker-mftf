@@ -35,5 +35,7 @@ MAGENTO_CMD+='&& php bin/magento config:set admin/security/admin_account_sharing
 MAGENTO_CMD+='&& php bin/magento config:set admin/captcha/enable 0 '
 su "$WEB_USER" -s /bin/bash -c "$MAGENTO_CMD"
 
+# Start php-fpm
+php-fpm -y /usr/local/etc/php-fpm.conf -D
 # Start nginx
 nginx -g "daemon off"
