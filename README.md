@@ -8,6 +8,9 @@ git clone -b 2.3.0 https://github.com/Magestore/docker-mftf
 cd docker-mftf
 ```
 
+**Note for jenkins**
+set parameter TEST_ENV with value is branch name to test difference environments
+
 ### Install
 - [Docker](https://docs.docker.com/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)

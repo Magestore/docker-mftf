@@ -1,7 +1,7 @@
 version: '3'
 services:
   mftf:
-    image: magestore/mftf:2.3.0
+    image: magestore/mftf:2.3.0-nginx-php7.1.25
     volumes:
       - ./app/code:/var/www/html/app/code
       # - ./app/pub/apps:/var/www/html/pub/apps
