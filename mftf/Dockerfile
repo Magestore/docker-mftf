@@ -1,4 +1,4 @@
-FROM php:7.1.25-fpm
+FROM php:7.2.13-fpm
 
 LABEL maintainer="Tit <mrthinlt@gmail.com>"
 
@@ -21,15 +21,15 @@ RUN apt-get update && apt-get install -y \
         curl \
         git \
         unzip \
-    #&& pecl install mcrypt-1.0.1 \
-    && docker-php-ext-install -j$(nproc) mcrypt xsl intl pdo_mysql soap zip opcache bcmath \
+    && pecl install mcrypt-1.0.1 \
+    && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath \
+	&& docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-configure gd --with-gd --enable-shared \
         --with-jpeg-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-freetype-dir=/usr/include/freetype2/freetype \
         --with-t1lib --enable-gd-native-ttf \
-    && docker-php-ext-install -j$(nproc) gd \
-    #&& docker-php-ext-enable mcrypt \
+    && docker-php-ext-enable mcrypt \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
