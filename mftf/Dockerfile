@@ -127,3 +127,9 @@ COPY phpunit.integration.xml ../integration/phpunit.xml
 # Back
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html
+
+# install some app after build image
+RUN apt-get update && apt-get install -y \
+        procps \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
