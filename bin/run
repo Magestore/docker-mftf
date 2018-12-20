@@ -28,7 +28,9 @@ if [ -d "app/tests/acceptance" ]; then
       >> $APP_FILE_VOLUME
     APP_COMPOSE=1
   fi
+fi
 
+if [ -d "app/tests/api-functional" ]; then
   TEST="tests/api-functional/testsuite/Magento"
   for EXTENSION in `ls app/$TEST`; do
     if [ -d "app/$TEST/$EXTENSION" ]; then
@@ -65,5 +67,5 @@ if [ -z "$APP_COMPOSE" ]; then
   docker-compose $1 $2 $3 $4
 else
   # Run with test app compose
-  docker-compose -f docker-compose.yml -f app/docker-compose.yml $1 $2 $3 $4
+  docker-compose -f docker-compose.yml -f app/docker-compose.yml $1 $2 $3 $4 --force-recreate
 fi
