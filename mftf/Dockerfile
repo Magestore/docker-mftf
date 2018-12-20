@@ -214,3 +214,9 @@ WORKDIR /var/www/html
 STOPSIGNAL SIGTERM
 
 CMD ["run-nginx"]
+
+# install some app after build image
+RUN apt-get update && apt-get install -y \
+        procps \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
