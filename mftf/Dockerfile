@@ -1,7 +1,10 @@
-FROM php:7.2.13-apache
+FROM php:7.1.25-apache
+
+LABEL maintainer="mrthinlt@gmail.com"
 
 # php extensions to run Magento
 RUN apt-get update && apt-get install -y \
+		libfreetype6-dev \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
         libmcrypt-dev \
@@ -12,15 +15,10 @@ RUN apt-get update && apt-get install -y \
         curl \
         git \
         unzip \
-    && pecl install mcrypt-1.0.1 \
-    && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath \
-    && docker-php-ext-configure gd --with-gd --enable-shared \
-        --with-jpeg-dir=/usr/include/ \
-        --with-png-dir=/usr/include/ \
-        --with-freetype-dir=/usr/include/freetype2/freetype \
-        --with-t1lib --enable-gd-native-ttf \
+		procps \
+    && docker-php-ext-install -j$(nproc) mcrypt xsl intl pdo_mysql soap zip opcache bcmath \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable mcrypt \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -128,8 +126,3 @@ COPY phpunit.integration.xml ../integration/phpunit.xml
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html
 
-# install some app after build image
-RUN apt-get update && apt-get install -y \
-        procps \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
