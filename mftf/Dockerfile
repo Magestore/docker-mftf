@@ -21,14 +21,16 @@ RUN apt-get update && apt-get install -y \
         curl \
         git \
         unzip \
+		procps vim iputils-ping \
     && pecl install mcrypt-1.0.1 \
     && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath \
 	&& docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-configure gd --with-gd --enable-shared \
-        --with-jpeg-dir=/usr/include/ \
-        --with-png-dir=/usr/include/ \
-        --with-freetype-dir=/usr/include/freetype2/freetype \
-        --with-t1lib --enable-gd-native-ttf \
+    && docker-php-ext-configure gd \
+        --with-jpeg-dir=/usr/local/ \
+        --with-png-dir=/usr/local/ --with-zlib-dir=/usr/local/ \
+        --with-freetype-dir=/usr/local/ \
+        --with-gd --enable-shared \
+        #--with-t1lib --enable-gd-native-ttf \
     && docker-php-ext-enable mcrypt \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -216,7 +218,3 @@ STOPSIGNAL SIGTERM
 CMD ["run-nginx"]
 
 # install some app after build image
-RUN apt-get update && apt-get install -y \
-        procps \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
