@@ -24,11 +24,12 @@ RUN apt-get update && apt-get install -y \
         procps vim iputils-ping \
     && docker-php-ext-install -j$(nproc) gd mcrypt xsl intl pdo_mysql soap zip opcache bcmath \
     && docker-php-ext-configure gd \
-        --with-jpeg-dir=/usr/include/ \
-        --with-png-dir=/usr/include/ \
-        --with-freetype-dir=/usr/include/ \
+        --with-jpeg-dir=/usr/local/ \
+        --with-png-dir=/usr/local/ \
+        --with-freetype-dir=/usr/local/ \
         --with-t1lib --enable-gd-native-ttf \
         --with-gd --enable-shared \
+    && docker-php-ext-install -j$(nproc) gd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
