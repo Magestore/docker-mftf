@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-configure gd \
         --with-jpeg-dir=/usr/local/ \
-        --with-png-dir=/usr/local/ --with-zlib-dir=/usr/local/ \
+        --with-png-dir=/usr/local/ \
         --with-freetype-dir=/usr/local/ \
         --with-gd --enable-shared \
         #--with-t1lib --enable-gd-native-ttf \
