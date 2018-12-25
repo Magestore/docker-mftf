@@ -218,5 +218,12 @@ CMD ["run-nginx"]
 # install some app after build image
 RUN apt-get update && apt-get install -y \
         procps \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-configure gd \
+        --with-jpeg-dir=/usr/include/ \
+        --with-png-dir=/usr/include/ \
+        --with-freetype-dir=/usr/include/ \
+        --with-t1lib --enable-gd-native-ttf \
+        --with-gd --enable-shared \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
