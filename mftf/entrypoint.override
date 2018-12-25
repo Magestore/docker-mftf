@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Change mode
+chown -f "$WEB_USER" \
+  app/code \
+  tests
+
+# Start php-fpm
+php-fpm -y /usr/local/etc/php-fpm.conf -D
+# Start nginx
+nginx -g "daemon off;"

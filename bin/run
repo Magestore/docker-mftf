@@ -64,8 +64,8 @@ cat $APP_FILE_VOLUME >> $APP_FILE
 # Run compose up
 if [ -z "$APP_COMPOSE" ]; then
   # No test
-  docker-compose $1 $2 $3 $4
+  docker-compose $@
 else
   # Run with test app compose
-  docker-compose -f docker-compose.yml -f app/docker-compose.yml $1 $2 $3 $4 --force-recreate
+  docker-compose -f docker-compose.yml -f app/docker-compose.yml $@
 fi
