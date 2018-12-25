@@ -21,15 +21,14 @@ RUN apt-get update && apt-get install -y \
         curl \
         git \
         unzip \
-    #&& pecl install mcrypt-1.0.1 \
-    && docker-php-ext-install -j$(nproc) mcrypt xsl intl pdo_mysql soap zip opcache bcmath \
-    && docker-php-ext-configure gd --with-gd --enable-shared \
+        procps vim iputils-ping \
+    && docker-php-ext-install -j$(nproc) gd mcrypt xsl intl pdo_mysql soap zip opcache bcmath \
+    && docker-php-ext-configure gd \
         --with-jpeg-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
-        --with-freetype-dir=/usr/include/freetype2/freetype \
+        --with-freetype-dir=/usr/include/ \
         --with-t1lib --enable-gd-native-ttf \
-    && docker-php-ext-install -j$(nproc) gd \
-    #&& docker-php-ext-enable mcrypt \
+        --with-gd --enable-shared \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -177,6 +176,7 @@ RUN set -ex \
         } \
     }' > auth.json" \
     && echo "PHP-FPM run user $WEB_USER" \
+    && mkdir -p /var/www/.composer && chown -R $WEB_USER /var/www/.composer \
     && su "$WEB_USER" -s /bin/bash -c \
         " composer require magento/magento2-functional-testing-framework" \
     && rm dev/tests/acceptance/composer.lock \
@@ -214,16 +214,3 @@ WORKDIR /var/www/html
 STOPSIGNAL SIGTERM
 
 CMD ["run-nginx"]
-
-# install some app after build image
-RUN apt-get update && apt-get install -y \
-        procps \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-configure gd \
-        --with-jpeg-dir=/usr/include/ \
-        --with-png-dir=/usr/include/ \
-        --with-freetype-dir=/usr/include/ \
-        --with-t1lib --enable-gd-native-ttf \
-        --with-gd --enable-shared \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
