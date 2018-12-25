@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-configure gd \
         --with-jpeg-dir=/usr/local/ \
-        --with-png-dir=/usr/local/ --with-zlib-dir=/usr/local/ \
+        --with-png-dir=/usr/local/ \
         --with-freetype-dir=/usr/local/ \
         --with-gd --enable-shared \
         #--with-t1lib --enable-gd-native-ttf \
@@ -35,5 +35,5 @@ RUN curl https://getcomposer.org/installer -o composer-setup.php \
 RUN chmod +x /usr/local/bin/docker-php-entrypoint
 
 # Back
-RUN rm -rf /var/www/.composer ; mkdir -p /var/www/.composer ; chmod 1000:1000 /var/www/.composer
+RUN rm -rf /var/www/.composer ; mkdir -p /var/www/.composer ; chmod -R www-data:www-data /var/www
 WORKDIR /var/www/html
