@@ -179,6 +179,7 @@ RUN set -ex \
         } \
     }' > auth.json" \
     && echo "PHP-FPM run user $WEB_USER" \
+    && mkdir -p /var/www/.composer && chown -R $WEB_USER /var/www/.composer \
     && su "$WEB_USER" -s /bin/bash -c \
         " composer require magento/magento2-functional-testing-framework" \
     && rm dev/tests/acceptance/composer.lock \
