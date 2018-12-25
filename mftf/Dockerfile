@@ -24,13 +24,13 @@ RUN apt-get update && apt-get install -y \
 		procps vim iputils-ping \
     && pecl install mcrypt-1.0.1 \
     && docker-php-ext-install -j$(nproc) gd xsl intl pdo_mysql soap zip opcache bcmath \
-	&& docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-configure gd \
         --with-jpeg-dir=/usr/local/ \
         --with-png-dir=/usr/local/ \
         --with-freetype-dir=/usr/local/ \
         --with-gd --enable-shared \
         #--with-t1lib --enable-gd-native-ttf \
+    && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable mcrypt \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
