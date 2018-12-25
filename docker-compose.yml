@@ -47,6 +47,8 @@ services:
 
   db:
     image: magestore/mftf-db:2.3.0
+    volumes:
+      - mftf-initdb.d:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento
