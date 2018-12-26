@@ -126,3 +126,14 @@ COPY phpunit.integration.xml ../integration/phpunit.xml
 RUN rm -rf /var/www/.composer
 WORKDIR /var/www/html
 
+# Re-install additional packages
+RUN apt-get update \
+	&& docker-php-ext-configure gd \
+        --with-jpeg-dir=/usr/local/ \
+        --with-png-dir=/usr/local/ \
+        --with-freetype-dir=/usr/local/ \
+        --with-t1lib --enable-gd-native-ttf \
+        --with-gd --enable-shared \
+    && docker-php-ext-install -j$(nproc) gd \
+	&& apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
