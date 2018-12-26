@@ -91,6 +91,7 @@ RUN set -ex \
         } \
     }' > auth.json" \
     && echo "Apache run user $APACHE_RUN_USER" \
+	&& mkdir -p /var/www/.composer && chown -R $APACHE_RUN_USER /var/www/.composer /var/www \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
         " composer require magento/magento2-functional-testing-framework" \
     && rm dev/tests/acceptance/composer.lock \
