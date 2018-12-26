@@ -131,5 +131,11 @@ WORKDIR /var/www/html
 # install some app after build image
 RUN apt-get update && apt-get install -y \
         procps \
+    && docker-php-ext-configure gd --with-gd --enable-shared \
+        --with-jpeg-dir=/usr/include/ \
+        --with-png-dir=/usr/include/ \
+        --with-freetype-dir=/usr/include/freetype2/freetype \
+        --with-t1lib --enable-gd-native-ttf \
+    && docker-php-ext-install -j$(nproc) gd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
