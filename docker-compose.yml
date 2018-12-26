@@ -22,7 +22,7 @@ services:
       - ./app/allure/allure-results:/allure-results
       - ./app/.composer:/var/www/.composer
     environment:
-      BASE_URL: https://localhost2.com/
+      BASE_URL: https://localhost.com/
       MAGENTO_DEV_MODE: developer
     networks:
       webnet:
