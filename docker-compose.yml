@@ -3,7 +3,7 @@ services:
   mftf:
     image: magestore/mftf:2.3.0-nginx-php7.2.13
     volumes:
-      - ./app/code:/var/www/html/app/code
+      - ./app/code/Magestore:/var/www/html/app/code/Magestore
       # - ./app/pub/apps:/var/www/html/pub/apps
       - ./app/allure/allure-results:/allure-results
       - ./app/.composer:/var/www/.composer
