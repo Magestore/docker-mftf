@@ -219,3 +219,14 @@ STOPSIGNAL SIGTERM
 CMD ["run-nginx"]
 
 # install some app after build image
+# php extensions to run Magento
+RUN apt-get update \
+    && docker-php-ext-configure gd \
+        --with-jpeg-dir=/usr/local/ \
+        --with-png-dir=/usr/local/ \
+        --with-freetype-dir=/usr/local/ \
+        --with-gd --enable-shared \
+        --with-t1lib --enable-gd-native-ttf \
+    && docker-php-ext-install -j$(nproc) gd \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
