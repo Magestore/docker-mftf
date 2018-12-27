@@ -186,7 +186,7 @@
     </type>
     <type name="Magento\Catalog\Model\ProductIdLocator">
         <arguments>
-            <argument name="idsLimit" xsi:type="number">1000</argument>
+            <argument name="idsLimit" xsi:type="number">500</argument>
         </arguments>
     </type>
     <type name="Magento\Catalog\Model\Config\Source\ListPerPage">
@@ -1054,8 +1054,8 @@
     <type name="Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\BatchSizeCalculator">
         <arguments>
             <argument name="batchSizes" xsi:type="array">
-                <item name="decimal" xsi:type="number">1000</item>
-                <item name="source" xsi:type="number">1000</item>
+                <item name="decimal" xsi:type="number">500</item>
+                <item name="source" xsi:type="number">500</item>
             </argument>
             <argument name="batchSizeManagers" xsi:type="array">
                 <item name="decimal" xsi:type="object">Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\DecimalBatchSizeManagement</item>
