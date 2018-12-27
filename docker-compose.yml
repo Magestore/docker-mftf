@@ -3,10 +3,12 @@ services:
   mftf:
     image: magestore/mftf:2.3.0-apache-php7.2.13
     volumes:
-      - ./app/code:/var/www/html/app/code
+      - ./app/code/Magestore:/var/www/html/app/code/Magestore      
       # - ./app/pub/apps:/var/www/html/pub/apps
       - ./app/allure/allure-results:/allure-results
       - ./app/.composer:/var/www/.composer
+      # mount to fixbug
+      - ./vendor/magento/module-catalog/etc/di.xml:/var/www/html/vendor/magento/module-catalog/etc/di.xml
     environment:
       BASE_URL: https://localhost.com/
       MAGENTO_DEV_MODE: developer
