@@ -48,7 +48,7 @@ services:
       - webnet
 
   db:
-    image: percona/percona-server:5.7
+    image: magestore/mftf-db:percona-5.7
     volumes:
       - ./db/my.cnf:/etc/my.cnf.d/my.cnf
     environment:
