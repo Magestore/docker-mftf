@@ -39,6 +39,8 @@ services:
       - 5900-5901:5900
     volumes:
       - /dev/shm:/dev/shm
+    environment:
+      START_XVFB: false
     networks:
       - webnet
 
