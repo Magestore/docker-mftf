@@ -40,7 +40,7 @@ services:
     volumes:
       - /dev/shm:/dev/shm
     environment:
-      START_XVFB: false
+      START_XVFB: "false"
     networks:
       - webnet
 
