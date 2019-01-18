@@ -52,7 +52,7 @@ services:
   db:
     image: magestore/mftf-db:percona-5.7
     volumes:
-      - ./db/my.cnf:/etc/my.cnf.d/my.cnf
+      - ./db/conf.d:/etc/my.cnf.d
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento
