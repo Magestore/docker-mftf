@@ -93,18 +93,17 @@ RUN set -ex \
         } \
     }' > auth.json" \
     && echo "Apache run user $APACHE_RUN_USER" \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-        " composer require magento/magento2-functional-testing-framework" \
-    && rm dev/tests/acceptance/composer.lock \
-    && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-        " composer install && composer install -d dev/tests/acceptance/" \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
+    && mkdir -p /var/www/.composer && chown -R $APACHE_RUN_USER /var/www/.composer \
+	&& su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " composer require \
+        authorizenet/authorizenet \
+        paypal/rest-api-sdk-php:* \
+        paypal/merchant-sdk-php:* \
+        stripe/stripe-php:* ; "
 
 COPY .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
-RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
+#RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
 
 # Functional Test
 WORKDIR /var/www/html/dev/tests/functional
@@ -112,7 +111,7 @@ RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
     'php /var/www/html/vendor/composer/composer/bin/composer install'
-RUN mv .htaccess.sample .htaccess
+# RUN mv .htaccess.sample .htaccess
 COPY phpunit.xml phpunit.xml
 COPY config.xml etc/config.xml
 
