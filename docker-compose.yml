@@ -50,7 +50,7 @@ services:
       - webnet
 
   db:
-    image: magestore/mftf-db:percona-5.7-lessdata
+    image: magestore/mftf-db:percona-5.7
     volumes:
       - ./db/conf.d:/etc/my.cnf.d
     environment:
