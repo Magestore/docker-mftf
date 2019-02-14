@@ -1,7 +1,6 @@
 version: '3'
 services:
   mftf:
-    build: ./mftf
     image: magestore/mftf:2.2.6-apache-php7.1
     volumes:
       - ./app/code:/var/www/html/app/code
@@ -32,7 +31,6 @@ services:
       - webnet
 
   db:
-    build: ./db
     image: magestore/mftf-db:2.2.6
     environment:
       MYSQL_ROOT_PASSWORD: magento

@@ -49,7 +49,7 @@ RUN chmod +x /usr/local/bin/run-apache
 CMD ["run-apache"]
 
 # Magento
-COPY CE/2.3.0.tar.bz2 magento.tar.bz2
+COPY CE/2.2.6.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \
@@ -57,37 +57,5 @@ RUN set -ex \
     && rm magento.tar.bz2
 
 # Test ENV
-WORKDIR dev/tests/acceptance
-RUN rm composer.lock \
-    && sed -i 's/git@github.com:/https:\/\/github.com\//g' composer.json
-RUN set -ex \
-    && . "$APACHE_ENVVARS" \
-    && chown $APACHE_RUN_USER /var/www \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-    'php /var/www/html/vendor/composer/composer/bin/composer install' \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c 'vendor/bin/robo build:project'
-COPY .env .env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
-RUN mv .htaccess.sample .htaccess && update-ca-certificates
-
-# Functional Test
-WORKDIR /var/www/html/dev/tests/functional
-RUN set -ex \
-    && . "$APACHE_ENVVARS" \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-    'php /var/www/html/vendor/composer/composer/bin/composer install'
-RUN mv .htaccess.sample .htaccess
-COPY phpunit.xml phpunit.xml
-COPY config.xml etc/config.xml
-
-# API Functional
-COPY phpunit.api.xml ../api-functional/phpunit.xml
-COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
-
-# Integration
-COPY install-config-mysql.integration.php ../integration/etc/install-config-mysql.php
-COPY phpunit.integration.xml ../integration/phpunit.xml
-
-# Back
-RUN rm -rf /var/www/.composer
-WORKDIR /var/www/html
+RUN update-ca-certificates
