@@ -1,4 +1,4 @@
-FROM php:7.2-apache
+FROM php:7.1-apache
 
 # php extensions to run Magento
 RUN apt-get update && apt-get install -y \
@@ -13,24 +13,22 @@ RUN apt-get update && apt-get install -y \
         curl \
         git \
         unzip \
-    && pecl install mcrypt-1.0.1 \
-    && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath \
+    && docker-php-ext-install -j$(nproc) mcrypt xsl intl pdo_mysql soap zip opcache bcmath \
     && docker-php-ext-configure gd --with-gd --enable-shared \
         --with-jpeg-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-freetype-dir=/usr/include/freetype2/freetype \
         --with-t1lib --enable-gd-native-ttf \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable mcrypt \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl https://packages.sury.org/php/apt.gpg -o /etc/apt/trusted.gpg.d/php.gpg \
-    && echo "deb https://packages.sury.org/php/ stretch main" > /etc/apt/sources.list.d/php.list \
-    && apt-get update && apt-get install -y libsodium-dev \
-    && docker-php-ext-install sodium \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# RUN curl https://packages.sury.org/php/apt.gpg -o /etc/apt/trusted.gpg.d/php.gpg \
+#     && echo "deb https://packages.sury.org/php/ stretch main" > /etc/apt/sources.list.d/php.list \
+#     && apt-get update && apt-get install -y libsodium-dev \
+#     && docker-php-ext-install sodium \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*
 
 # Install composer
 # RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
@@ -72,7 +70,7 @@ EXPOSE 80 443
 #    && chown -R "$APACHE_RUN_USER" /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.3.2.tar.bz2 magento.tar.bz2
+COPY CE/2.2.9.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \

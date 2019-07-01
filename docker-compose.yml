@@ -2,7 +2,7 @@ version: '3'
 services:
   mftf:
     build: ./mftf
-    image: magestore/mftf:2.3.2
+    image: magestore/mftf:2.2.9
     volumes:
       # - ./app/code:/var/www/html/app/code
       # - ./app/pub/apps:/var/www/html/pub/apps
@@ -48,7 +48,7 @@ services:
 
   db:
     build: ./db
-    image: magestore/mftf-db:2.3.2
+    image: magestore/mftf-db:2.2.9
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento
