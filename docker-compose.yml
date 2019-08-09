@@ -4,9 +4,10 @@ services:
     build: ./mftf
     image: magestore/mftf:2.2.9
     volumes:
-      # - ./app/code:/var/www/html/app/code
-      # - ./app/pub/apps:/var/www/html/pub/apps
-      # - ./app/allure/allure-results:/allure-results
+      - ./app/code:/var/www/html/app/code
+      - ./app/tests/Magestore/PosSampleData:/var/www/html/app/code/Magestore/PosSampleData
+      - ./app/pub/apps:/var/www/html/pub/apps
+      - ./app/allure/allure-results:/allure-results
       - ./app/.composer:/var/www/.composer
     environment:
       BASE_URL: https://localhost.com/
@@ -16,35 +17,35 @@ services:
         aliases:
           - localhost.com
 
-  # functional:
-  #   image: magestore/mftf:2.2.4
-  #   volumes:
-  #     - ./app/code:/var/www/html/app/code
-  #     - ./app/allure/allure-results:/allure-results
-  #     - ./app/.composer:/var/www/.composer
-  #   environment:
-  #     BASE_URL: https://localhost2.com/
-  #     MAGENTO_DEV_MODE: developer
-  #   networks:
-  #     webnet:
-  #       aliases:
-  #         - localhost2.com
-  #   entrypoint:
-  #     - apache2-foreground
+  functional:
+    image: magestore/mftf:2.2.4
+    volumes:
+      - ./app/code:/var/www/html/app/code
+      - ./app/allure/allure-results:/allure-results
+      - ./app/.composer:/var/www/.composer
+    environment:
+      BASE_URL: https://localhost2.com/
+      MAGENTO_DEV_MODE: developer
+    networks:
+      webnet:
+        aliases:
+          - localhost2.com
+    entrypoint:
+      - apache2-foreground
 
-  # selenium:
-  #   image: magestore/mftf-selenium-chrome
-  #   #ports:
-  #   #  - 5900:5900
-  #   volumes:
-  #     - /dev/shm:/dev/shm
-  #   networks:
-  #     - webnet
+  selenium:
+    image: magestore/mftf-selenium-chrome
+    ports:
+     - 5900:5900
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      - webnet
 
-  # mailhog:
-  #   image: mailhog/mailhog
-  #   networks:
-  #     - webnet
+  mailhog:
+    image: mailhog/mailhog
+    networks:
+      - webnet
 
   db:
     build: ./db
@@ -55,14 +56,14 @@ services:
     networks:
       - webnet
 
-  # phpmyadmin:
-  #   image: phpmyadmin/phpmyadmin
-  #   environment:
-  #     PMA_HOST: db
-  #     PMA_USER: root
-  #     PMA_PASSWORD: magento
-  #   networks:
-  #     - webnet
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: magento
+    networks:
+      - webnet
 
 networks:
   webnet:
