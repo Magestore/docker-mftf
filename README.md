@@ -41,14 +41,19 @@ docker-compose exec -u {username} {service} /bin/bash
 
 ## Run Test
 ### Acceptance
-After `ssh` to docker container `mftf` with username `www-data`
+After `ssh` to docker container `functional` with username `www-data`
 ```sh
-docker-compose exec -u www-data mftf /bin/bash
+docker-compose exec -u www-data functional /bin/bash
 cd dev/tests/acceptance
 vendor/bin/robo generate:tests
 vendor/bin/codecept run
 # Show Report
 cp tests/_output/allure-results/* /allure-results/
+```
+
+To view report, execute below command then open your browser and access to: [http://localhost:4040](http://localhost:4040)
+```sh
+docker-compose -f docker-compose.report.yml up -d
 ```
 
 [magento functional testing framework](https://devdocs.magento.com/mftf/2.2/introduction.html)
