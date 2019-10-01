@@ -51,6 +51,11 @@ vendor/bin/codecept run
 cp tests/_output/allure-results/* /allure-results/
 ```
 
+To view report, execute below command then open your browser and access to: [http://localhost:4040](http://localhost:4040)
+```sh
+docker-compose -f docker-compose.report.yml up -d
+```
+
 [magento functional testing framework](https://devdocs.magento.com/mftf/2.2/introduction.html)
 
 [codeception](https://codeception.com/docs/02-GettingStarted)
