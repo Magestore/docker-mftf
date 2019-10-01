@@ -1,22 +1,16 @@
 version: '3'
 services:
   allure:
-    build: ./allure
-    image: allure:1.0
-    volumes:
-      - ./app/allure/allure-results:/allure-results
-      - ./app/allure/allure-report:/allure-report
-    networks:
-      - webnet
-
-  nginxreport:
-    image: nginx:alpine
+    image: "frankescobar/allure-docker-service"
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 1
+      KEEP_HISTORY: "TRUE"
     ports:
-      - 8030:80
+      - "4040:4040"
+      - "5050:5050"
     volumes:
-      - ./app/allure/allure-report:/usr/share/nginx/html
+      - ./app/allure/allure-results:/app/allure-results
     networks:
       - webnet
-
 networks:
   webnet:
