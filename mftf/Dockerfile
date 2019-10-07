@@ -70,7 +70,7 @@ EXPOSE 80 443
 #    && chown -R "$APACHE_RUN_USER" /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.2.9.tar.bz2 magento.tar.bz2
+COPY CE/2.2.10.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \
