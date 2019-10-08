@@ -57,6 +57,15 @@ vendor/bin/codecept run
 cp tests/_output/allure-results/* /allure-results/
 ```
 
+To view report, execute below command
+```sh
+docker-compose -f docker-compose.report.yml up -d
+```
+Execute command below to get allure's port then open your browser and access to: http://localhost:{port}
+```sh
+docker-compose -f docker-compose.report.yml port --protocol=tcp allure 4040 | sed 's/0.0.0.0://'
+```
+
 [magento functional testing framework](https://devdocs.magento.com/mftf/2.2/introduction.html)
 
 [codeception](https://codeception.com/docs/02-GettingStarted)
