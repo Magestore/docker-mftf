@@ -3,5 +3,4 @@ db/magento/
 app/
 mftf/Dockerfile.magento.build
 docker-compose.magento.build.yml
-mftf/CE/2.3.3.tar.bz2
 .idea
