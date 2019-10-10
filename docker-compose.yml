@@ -1,7 +1,7 @@
 version: '3'
 services:
   mftf:
-    build: ./mftf
+#    build: ./mftf
     image: vinhnv95/mftf:2.3.3-apache-php7.2
     volumes:
       - ./app/code:/var/www/html/app/code
@@ -48,7 +48,7 @@ services:
       - webnet
 
   db:
-    build: ./db
+#    build: ./db
     image: vinhnv95/mftf-db:2.3.3-percona
     environment:
       MYSQL_ROOT_PASSWORD: magento
