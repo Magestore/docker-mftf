@@ -5,8 +5,8 @@ services:
     image: magestore/mftf:2.2.10
     volumes:
       - ./app/code:/var/www/html/app/code
-      - ./app/tests/Magestore/PosSampleData:/var/www/html/app/code/Magestore/PosSampleData
-      - ./app/pub/apps:/var/www/html/pub/apps
+#      - ./app/tests/Magestore/PosSampleData:/var/www/html/app/code/Magestore/PosSampleData
+#      - ./app/pub/apps:/var/www/html/pub/apps
       - ./app/allure/allure-results:/allure-results
       - ./app/.composer:/var/www/.composer
     environment:
