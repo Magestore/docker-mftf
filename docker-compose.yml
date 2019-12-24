@@ -1,8 +1,9 @@
 version: '3'
 services:
   mftf:
-#    build: ./mftf
-    image: vinhnv95/mftf:2.3.3-apache-php7.2
+    # build: ./mftf
+    # image: vinhnv95/mftf:2.3.3-apache-php7.2
+    image: 192.168.130.18:5000/mftf:ee-2.3.3-apache-php7.2
     volumes:
       - ./app/code:/var/www/html/app/code
 #      - ./app/tests/Magestore/PosSampleData:/var/www/html/app/code/Magestore/PosSampleData
@@ -48,8 +49,9 @@ services:
       - webnet
 
   db:
-#    build: ./db
-    image: vinhnv95/mftf-db:2.3.3-percona
+    # build: ./db
+    # image: vinhnv95/mftf-db:2.3.3-percona
+    image: 192.168.130.18:5000/mftf-db:ee-2.3.3-percona
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento

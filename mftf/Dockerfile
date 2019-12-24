@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y \
         --with-jpeg-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-freetype-dir=/usr/include/freetype2/freetype \
-        --with-t1lib --enable-gd-native-ttf \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable mcrypt \
     && apt-get clean \
@@ -72,12 +71,12 @@ EXPOSE 80 443
 #    && chown -R "$APACHE_RUN_USER" /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.3.3.tar.bz2 magento.tar.bz2
+COPY EE/2.3.3.zip magento.zip
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \
-    && su "$APACHE_RUN_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
-    && rm magento.tar.bz2
+    && su "$APACHE_RUN_USER" -s /bin/bash -c 'unzip magento.zip' \
+    && rm magento.zip
 
 # Prepare acceptance test
 # WORKDIR /var/www/html
@@ -125,8 +124,8 @@ RUN set -ex \
 # COPY phpunit.integration.xml ../integration/phpunit.xml
 
 # # Back
-# RUN rm -rf /var/www/.composer
-# WORKDIR /var/www/html
+RUN rm -rf /var/www/.composer
+WORKDIR /var/www/html
 
 # Run apache server script
 COPY mysql.php mysql.php
