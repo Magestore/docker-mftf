@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
         git \
         unzip \
     && pecl install mcrypt-1.0.1 \
-    && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath \
+    && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath sockets \
     && docker-php-ext-configure gd --with-gd --enable-shared \
         --with-jpeg-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
@@ -71,7 +71,7 @@ EXPOSE 80 443
 #    && chown -R "$APACHE_RUN_USER" /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY EE/2.3.3.zip magento.zip
+COPY EE/2.3.4.zip magento.zip
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \
