@@ -36,6 +36,13 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN curl https://packages.sury.org/php/apt.gpg -o /etc/apt/trusted.gpg.d/php.gpg \
+    && echo "deb https://packages.sury.org/php/ stretch main" > /etc/apt/sources.list.d/php.list \
+    && apt-get update && apt-get install -y libsodium-dev \
+    && docker-php-ext-install sodium \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install Nginx
 RUN set -x \
 	&& apt-get update \
