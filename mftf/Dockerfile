@@ -162,25 +162,25 @@ RUN chmod +x /usr/local/bin/run-nginx
 WORKDIR /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.2.10.tar.bz2 magento.tar.bz2
+COPY CE/2.3.3.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && mkdir -p /var/www/html && chown -R "$WEB_USER" /var/www/html \
     && su "$WEB_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
     && rm magento.tar.bz2
 
 # Prepare acceptance test
-#RUN set -ex \
-#    && su "$WEB_USER" -s /bin/bash -c \
-#    "echo '{ \
-#        \"http-basic\": { \
-#            \"repo.magento.com\": { \
-#                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
-#                \"password\": \"cfe4874a50552827da901971d249322a\" \
-#            } \
-#        } \
-#    }' > auth.json" \
-#    && echo "PHP-FPM run user $WEB_USER" \
-#    && mkdir -p /var/www/.composer && chown -R $WEB_USER /var/www/.composer \
+RUN set -ex \
+    && su "$WEB_USER" -s /bin/bash -c \
+    "echo '{ \
+        \"http-basic\": { \
+            \"repo.magento.com\": { \
+                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
+                \"password\": \"cfe4874a50552827da901971d249322a\" \
+            } \
+        } \
+    }' > auth.json" \
+    && echo "PHP-FPM run user $WEB_USER" \
+    && mkdir -p /var/www/.composer && chown -R $WEB_USER /var/www/.composer
 #	&& su "$WEB_USER" -s /bin/bash -c \
 #        " composer require \
 #        authorizenet/authorizenet \
