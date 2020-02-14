@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y \
         unzip \
 		procps vim iputils-ping \
     && pecl install mcrypt-1.0.1 \
-    && docker-php-ext-install -j$(nproc) gd xsl intl pdo_mysql soap zip opcache bcmath \
+    && docker-php-ext-install -j$(nproc) gd xsl intl pdo_mysql soap zip opcache bcmath sockets \
     && docker-php-ext-configure gd \
         --with-jpeg-dir=/usr/local/ \
         --with-png-dir=/usr/local/ \
@@ -33,6 +33,13 @@ RUN apt-get update && apt-get install -y \
         #--with-t1lib --enable-gd-native-ttf \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable mcrypt \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl https://packages.sury.org/php/apt.gpg -o /etc/apt/trusted.gpg.d/php.gpg \
+    && echo "deb https://packages.sury.org/php/ stretch main" > /etc/apt/sources.list.d/php.list \
+    && apt-get update && apt-get install -y libsodium-dev \
+    && docker-php-ext-install sodium \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -162,7 +169,7 @@ RUN chmod +x /usr/local/bin/run-nginx
 WORKDIR /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.3.3.tar.bz2 magento.tar.bz2
+COPY CE/2.3.4.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && mkdir -p /var/www/html && chown -R "$WEB_USER" /var/www/html \
     && su "$WEB_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
