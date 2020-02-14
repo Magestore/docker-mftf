@@ -41,6 +41,18 @@ if [ -d "app/tests/api-functional" ]; then
   done
 fi
 
+if [ -d "app/tests/static" ]; then
+  TEST="tests/static"
+  for EXTENSION in `ls app/$TEST`; do
+    if [ -d "app/$TEST/$EXTENSION" ]; then
+      echo "      - ./app/$TEST/$EXTENSION:/var/www/html/dev/$TEST/$EXTENSION" \
+        >> $APP_FILE_VOLUME
+      APP_COMPOSE=1
+    fi
+  done
+fi
+
+
 if [ -d "app/tests/functional" ]; then
   TEST="tests/functional/tests/app/Magento"
   for EXTENSION in `ls app/$TEST`; do

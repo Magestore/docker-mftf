@@ -11,6 +11,7 @@ ENV NJS_VERSION   1.15.7.0.2.6-1~stretch
 
 # php extensions to run Magento
 RUN apt-get update && apt-get install -y \
+        apt-transport-https \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
         libmcrypt-dev \
@@ -161,56 +162,56 @@ RUN chmod +x /usr/local/bin/run-nginx
 WORKDIR /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.3.0.tar.bz2 magento.tar.bz2
+COPY CE/2.2.10.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && mkdir -p /var/www/html && chown -R "$WEB_USER" /var/www/html \
     && su "$WEB_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
     && rm magento.tar.bz2
 
 # Prepare acceptance test
-RUN set -ex \
-    && su "$WEB_USER" -s /bin/bash -c \
-    "echo '{ \
-        \"http-basic\": { \
-            \"repo.magento.com\": { \
-                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
-                \"password\": \"cfe4874a50552827da901971d249322a\" \
-            } \
-        } \
-    }' > auth.json" \
-    && echo "PHP-FPM run user $WEB_USER" \
-    && mkdir -p /var/www/.composer && chown -R $WEB_USER /var/www/.composer \
-	&& su "$WEB_USER" -s /bin/bash -c \
-        " composer require \
-        authorizenet/authorizenet \
-        paypal/rest-api-sdk-php:* \
-        paypal/merchant-sdk-php:* \
-        stripe/stripe-php:* ; "
+#RUN set -ex \
+#    && su "$WEB_USER" -s /bin/bash -c \
+#    "echo '{ \
+#        \"http-basic\": { \
+#            \"repo.magento.com\": { \
+#                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
+#                \"password\": \"cfe4874a50552827da901971d249322a\" \
+#            } \
+#        } \
+#    }' > auth.json" \
+#    && echo "PHP-FPM run user $WEB_USER" \
+#    && mkdir -p /var/www/.composer && chown -R $WEB_USER /var/www/.composer \
+#	&& su "$WEB_USER" -s /bin/bash -c \
+#        " composer require \
+#        authorizenet/authorizenet \
+#        paypal/rest-api-sdk-php:* \
+#        paypal/merchant-sdk-php:* \
+#        stripe/stripe-php:* ; "
 
 COPY .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
 #RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
 
-# Functional Test
-WORKDIR /var/www/html/dev/tests/functional
-RUN set -ex \
-    && su "$WEB_USER" -s /bin/bash -c \
-    'php /var/www/html/vendor/composer/composer/bin/composer install'
-# RUN mv .htaccess.sample .htaccess
-COPY phpunit.xml phpunit.xml
-COPY config.xml etc/config.xml
-
-# API Functional
-COPY phpunit.api.xml ../api-functional/phpunit.xml
-COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
-
-# Integration
-COPY install-config-mysql.integration.php ../integration/etc/install-config-mysql.php
-COPY phpunit.integration.xml ../integration/phpunit.xml
-
-# Back
-RUN rm -rf /var/www/.composer
-WORKDIR /var/www/html
+## Functional Test
+#WORKDIR /var/www/html/dev/tests/functional
+#RUN set -ex \
+#    && su "$WEB_USER" -s /bin/bash -c \
+#    'php /var/www/html/vendor/composer/composer/bin/composer install'
+## RUN mv .htaccess.sample .htaccess
+#COPY phpunit.xml phpunit.xml
+#COPY config.xml etc/config.xml
+#
+## API Functional
+#COPY phpunit.api.xml ../api-functional/phpunit.xml
+#COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
+#
+## Integration
+#COPY install-config-mysql.integration.php ../integration/etc/install-config-mysql.php
+#COPY phpunit.integration.xml ../integration/phpunit.xml
+#
+## Back
+#RUN rm -rf /var/www/.composer
+#WORKDIR /var/www/html
 
 STOPSIGNAL SIGTERM
 
@@ -218,13 +219,13 @@ CMD ["run-nginx"]
 
 # install some app after build image
 # php extensions to run Magento
-RUN apt-get update \
-    && docker-php-ext-configure gd \
-        --with-jpeg-dir=/usr/local/ \
-        --with-png-dir=/usr/local/ \
-        --with-freetype-dir=/usr/local/ \
-        --with-gd --enable-shared \
-        --with-t1lib --enable-gd-native-ttf \
-    && docker-php-ext-install -j$(nproc) gd \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update \
+#    && docker-php-ext-configure gd \
+#        --with-jpeg-dir=/usr/local/ \
+#        --with-png-dir=/usr/local/ \
+#        --with-freetype-dir=/usr/local/ \
+#        --with-gd --enable-shared \
+#        --with-t1lib --enable-gd-native-ttf \
+#    && docker-php-ext-install -j$(nproc) gd \
+#    && apt-get clean \
+#    && rm -rf /var/lib/apt/lists/*

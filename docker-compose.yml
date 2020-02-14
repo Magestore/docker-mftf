@@ -1,14 +1,14 @@
 version: '3'
 services:
   mftf:
-    image: magestore/mftf:2.3.0-nginx-php7.2.13
+#    build: ./mftf
+    image: magestore/mftf:2.2.10-nginx-php7.2.13
     volumes:
-      - ./app/code/Magestore:/var/www/html/app/code/Magestore
-      # - ./app/pub/apps:/var/www/html/pub/apps
+      - ./app/code:/var/www/html/app/code
+#      - ./app/tests/Magestore/PosSampleData:/var/www/html/app/code/Magestore/PosSampleData
+#      - ./app/pub/apps:/var/www/html/pub/apps
       - ./app/allure/allure-results:/allure-results
       - ./app/.composer:/var/www/.composer
-      # mount to fixbug
-      - ./vendor/magento/module-catalog/etc/di.xml:/var/www/html/vendor/magento/module-catalog/etc/di.xml
     environment:
       BASE_URL: https://localhost.com/
       MAGENTO_DEV_MODE: developer
@@ -24,7 +24,7 @@ services:
       - ./app/allure/allure-results:/allure-results
       - ./app/.composer:/var/www/.composer
     environment:
-      BASE_URL: https://localhost.com/
+      BASE_URL: https://localhost2.com/
       MAGENTO_DEV_MODE: developer
     networks:
       webnet:
@@ -36,11 +36,9 @@ services:
   selenium:
     image: magestore/mftf-selenium-chrome
     ports:
-      - 5900-5901:5900
+      - 5900:5900
     volumes:
       - /dev/shm:/dev/shm
-    environment:
-      START_XVFB: "false"
     networks:
       - webnet
 
@@ -50,7 +48,8 @@ services:
       - webnet
 
   db:
-    image: magestore/mftf-db:percona-5.7
+#    build: ./db
+    image: magestore/mftf-db:2.2.10-percona
     volumes:
       - ./db/conf.d:/etc/my.cnf.d
     environment:
