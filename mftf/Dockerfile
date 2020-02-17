@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
         curl \
         git \
         unzip \
+        nano \
     && docker-php-ext-install -j$(nproc) mcrypt xsl intl pdo_mysql soap zip opcache bcmath \
     && docker-php-ext-configure gd --with-gd --enable-shared \
         --with-jpeg-dir=/usr/include/ \
@@ -23,18 +24,17 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# RUN curl https://packages.sury.org/php/apt.gpg -o /etc/apt/trusted.gpg.d/php.gpg \
-#     && echo "deb https://packages.sury.org/php/ stretch main" > /etc/apt/sources.list.d/php.list \
-#     && apt-get update && apt-get install -y libsodium-dev \
-#     && docker-php-ext-install sodium \
-#     && apt-get clean \
-#     && rm -rf /var/lib/apt/lists/*
+#RUN curl https://packages.sury.org/php/apt.gpg -o /etc/apt/trusted.gpg.d/php.gpg \
+#    && echo "deb https://packages.sury.org/php/ stretch main" > /etc/apt/sources.list.d/php.list \
+#    && apt-get update && apt-get install -y libsodium-dev \
+#    && docker-php-ext-install sodium \
+#    && apt-get clean \
+#    && rm -rf /var/lib/apt/lists/*
 
 # Install composer
-# RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-#     && php -r "if (hash_file('sha384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-#     && php composer-setup.php --install-dir=/usr/local/bin/ --filename=composer \
-#     && php -r "unlink('composer-setup.php');"
+RUN curl https://getcomposer.org/installer -o composer-setup.php \
+    && php composer-setup.php --install-dir=/usr/local/bin/ --filename=composer \
+    && php -r "unlink('composer-setup.php');"
 
 # Enable apache modes
 RUN a2enmod rewrite
@@ -70,7 +70,7 @@ EXPOSE 80 443
 #    && chown -R "$APACHE_RUN_USER" /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.2.10.tar.bz2 magento.tar.bz2
+COPY CE/2.2.11.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && . "$APACHE_ENVVARS" \
     && rm "$APACHE_LOG_DIR"/* \
@@ -78,31 +78,31 @@ RUN set -ex \
     && rm magento.tar.bz2
 
 # Prepare acceptance test
-# WORKDIR /var/www/html
-# RUN set -ex \
-#     && . "$APACHE_ENVVARS" \
-#     && su "$APACHE_RUN_USER" -s /bin/bash -c \
-#     "echo '{ \
-#         \"http-basic\": { \
-#             \"repo.magento.com\": { \
-#                 \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
-#                 \"password\": \"cfe4874a50552827da901971d249322a\" \
-#             } \
-#         } \
-#     }' > auth.json" \
-#     && echo "Apache run user $APACHE_RUN_USER" \
+WORKDIR /var/www/html
+RUN set -ex \
+    && . "$APACHE_ENVVARS" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+    "echo '{ \
+        \"http-basic\": { \
+            \"repo.magento.com\": { \
+                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
+                \"password\": \"cfe4874a50552827da901971d249322a\" \
+            } \
+        } \
+    }' > auth.json"
+#    && echo "Apache run user $APACHE_RUN_USER" \
 #     && su "$APACHE_RUN_USER" -s /bin/bash -c \
 #         " composer require magento/magento2-functional-testing-framework" \
 #     && rm dev/tests/acceptance/composer.lock \
 #     && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json \
-#     && su "$APACHE_RUN_USER" -s /bin/bash -c \
-#         " composer install && composer install -d dev/tests/acceptance/" \
-#     && su "$APACHE_RUN_USER" -s /bin/bash -c \
-#         " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
+#    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+#        " composer install"
+#    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+#        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
 
-# COPY .env dev/tests/acceptance/.env
-# COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
-# RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
+COPY --chown=www-data:www-data .env dev/tests/acceptance/.env
+COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
+RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
 
 # # Functional Test
 # WORKDIR /var/www/html/dev/tests/functional
@@ -114,17 +114,17 @@ RUN set -ex \
 # COPY phpunit.xml phpunit.xml
 # COPY config.xml etc/config.xml
 
-# # API Functional
-# COPY phpunit.api.xml ../api-functional/phpunit.xml
-# COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
+# API Functional
+COPY phpunit.api.xml ../api-functional/phpunit.xml
+COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
 
-# # Integration
-# COPY install-config-mysql.integration.php ../integration/etc/install-config-mysql.php
-# COPY phpunit.integration.xml ../integration/phpunit.xml
+# Integration
+COPY install-config-mysql.integration.php ../integration/etc/install-config-mysql.php
+COPY phpunit.integration.xml ../integration/phpunit.xml
 
-# # Back
-# RUN rm -rf /var/www/.composer
-# WORKDIR /var/www/html
+# Back
+RUN rm -rf /var/www/.composer
+WORKDIR /var/www/html
 
 # Run apache server script
 COPY mysql.php mysql.php
