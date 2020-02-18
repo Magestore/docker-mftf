@@ -52,7 +52,6 @@ if [ -d "app/tests/static" ]; then
   done
 fi
 
-
 if [ -d "app/tests/functional" ]; then
   TEST="tests/functional/tests/app/Magento"
   for EXTENSION in `ls app/$TEST`; do

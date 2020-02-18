@@ -89,16 +89,21 @@ RUN set -ex \
                 \"password\": \"cfe4874a50552827da901971d249322a\" \
             } \
         } \
-    }' > auth.json"
-#    && echo "Apache run user $APACHE_RUN_USER" \
-#     && su "$APACHE_RUN_USER" -s /bin/bash -c \
-#         " composer require magento/magento2-functional-testing-framework" \
-#     && rm dev/tests/acceptance/composer.lock \
-#     && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json \
-#    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-#        " composer install"
-#    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-#        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
+    }' > auth.json" \
+    && echo "Apache run user $APACHE_RUN_USER" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " composer install " \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " rm vendor/bin/mftf vendor/bin/codecept vendor/bin/robo; \
+        ln -s ../magento/magento2-functional-testing-framework/bin/mftf vendor/bin/mftf; \
+        ln -s ../codeception/codeception/codecept vendor/bin/codecept; \
+        ln -s ../consolidation/robo/robo vendor/bin/robo; \
+        chmod -R +x \
+            vendor/magento/magento2-functional-testing-framework/bin \
+            vendor/codeception/codeception/codecept \
+            vendor/consolidation/robo/robo;" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
 
 COPY --chown=www-data:www-data .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
