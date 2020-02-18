@@ -20,7 +20,6 @@ RUN apt-get update && apt-get install -y \
         --with-jpeg-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-freetype-dir=/usr/include/freetype2/freetype \
-        --with-t1lib --enable-gd-native-ttf \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable mcrypt \
     && apt-get clean \
