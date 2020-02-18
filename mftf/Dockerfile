@@ -92,10 +92,6 @@ RUN set -ex \
         } \
     }' > auth.json" \
     && echo "Apache run user $APACHE_RUN_USER" \
-#    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-#        " composer require magento/magento2-functional-testing-framework" \
-#    && rm dev/tests/acceptance/composer.lock \
-#    && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
         " composer install " \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
