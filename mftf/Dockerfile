@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
         curl \
         git \
         unzip \
+        nano \
     && pecl install mcrypt-1.0.1 \
     && docker-php-ext-install -j$(nproc) xsl intl pdo_mysql soap zip opcache bcmath sockets \
     && docker-php-ext-configure gd --with-gd --enable-shared \
@@ -65,8 +66,8 @@ EXPOSE 80 443
 #    && . "$APACHE_ENVVARS" \
 #    && rm "$APACHE_LOG_DIR"/* \
 #    && rm -rf /var/www/html && mkdir -p /var/www \
-#    && cd /var/www && git clone https://github.com/magento/magento2.git html \
-#    && cd /var/www/html && git checkout 2.3-develop \
+#    && cd /var/www && git clone --branch 2.3.4 --depth 1 https://github.com/magento/magento2.git html \
+#    && cd /var/www/html \
 #    && chown -R "$APACHE_RUN_USER" /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
@@ -97,8 +98,17 @@ RUN set -ex \
 #    && sed -i 's/git@github.com:/https:\/\/github.com\//g' dev/tests/acceptance/composer.json \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
         " composer install " \
-#    && su "$APACHE_RUN_USER" -s /bin/bash -c \
-#        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " rm vendor/bin/mftf vendor/bin/codecept vendor/bin/robo; \
+        ln -s ../magento/magento2-functional-testing-framework/bin/mftf vendor/bin/mftf; \
+        ln -s ../codeception/codeception/codecept vendor/bin/codecept; \
+        ln -s ../consolidation/robo/robo vendor/bin/robo; \
+        chmod -R +x \
+            vendor/magento/magento2-functional-testing-framework/bin \
+            vendor/codeception/codeception/codecept \
+            vendor/consolidation/robo/robo;" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
 
 COPY .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt

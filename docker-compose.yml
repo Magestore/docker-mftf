@@ -1,7 +1,7 @@
 version: '3'
 services:
   mftf:
-    build: ./mftf
+#    build: ./mftf
     image: magestore/mftf:2.3.4-apache-php7.2
     volumes:
       - ./app/code:/var/www/html/app/code
@@ -36,7 +36,7 @@ services:
   selenium:
     image: magestore/mftf-selenium-chrome
     ports:
-     - 5900:5900
+      - 5900:5900
     volumes:
       - /dev/shm:/dev/shm
     networks:
@@ -50,6 +50,8 @@ services:
   db:
 #    build: ./db
     image: magestore/mftf-db:2.3.4-percona
+    volumes:
+      - ./db/conf.d:/etc/my.cnf.d
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento
