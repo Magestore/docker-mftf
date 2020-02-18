@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
         git \
         unzip \
 		procps vim iputils-ping \
+		nano \
     && pecl install mcrypt-1.0.1 \
     && docker-php-ext-install -j$(nproc) gd xsl intl pdo_mysql soap zip opcache bcmath \
     && docker-php-ext-configure gd \
@@ -162,35 +163,42 @@ RUN chmod +x /usr/local/bin/run-nginx
 WORKDIR /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.2.10.tar.bz2 magento.tar.bz2
+COPY CE/2.2.11.tar.bz2 magento.tar.bz2
 RUN set -ex \
     && mkdir -p /var/www/html && chown -R "$WEB_USER" /var/www/html \
     && su "$WEB_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
     && rm magento.tar.bz2
 
 # Prepare acceptance test
-#RUN set -ex \
-#    && su "$WEB_USER" -s /bin/bash -c \
-#    "echo '{ \
-#        \"http-basic\": { \
-#            \"repo.magento.com\": { \
-#                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
-#                \"password\": \"cfe4874a50552827da901971d249322a\" \
-#            } \
-#        } \
-#    }' > auth.json" \
-#    && echo "PHP-FPM run user $WEB_USER" \
-#    && mkdir -p /var/www/.composer && chown -R $WEB_USER /var/www/.composer \
-#	&& su "$WEB_USER" -s /bin/bash -c \
-#        " composer require \
-#        authorizenet/authorizenet \
-#        paypal/rest-api-sdk-php:* \
-#        paypal/merchant-sdk-php:* \
-#        stripe/stripe-php:* ; "
+RUN set -ex \
+    && su "$WEB_USER" -s /bin/bash -c \
+    "echo '{ \
+        \"http-basic\": { \
+            \"repo.magento.com\": { \
+                \"username\": \"a3380186b4ffb670466a01331a3fb375\", \
+                \"password\": \"cfe4874a50552827da901971d249322a\" \
+            } \
+        } \
+    }' > auth.json" \
+    && echo "PHP-FPM run user $WEB_USER" \
+    && mkdir -p /var/www/.composer && chown -R $WEB_USER /var/www/.composer \
+    && su "$WEB_USER" -s /bin/bash -c \
+        " composer install " \
+    && su "$WEB_USER" -s /bin/bash -c \
+        " rm vendor/bin/mftf vendor/bin/codecept vendor/bin/robo; \
+        ln -s ../magento/magento2-functional-testing-framework/bin/mftf vendor/bin/mftf; \
+        ln -s ../codeception/codeception/codecept vendor/bin/codecept; \
+        ln -s ../consolidation/robo/robo vendor/bin/robo; \
+        chmod -R +x \
+            vendor/magento/magento2-functional-testing-framework/bin \
+            vendor/codeception/codeception/codecept \
+            vendor/consolidation/robo/robo;" \
+    && su "$WEB_USER" -s /bin/bash -c \
+        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
 
 COPY .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
-#RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
+RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
 
 ## Functional Test
 #WORKDIR /var/www/html/dev/tests/functional
@@ -200,18 +208,18 @@ COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
 ## RUN mv .htaccess.sample .htaccess
 #COPY phpunit.xml phpunit.xml
 #COPY config.xml etc/config.xml
-#
-## API Functional
-#COPY phpunit.api.xml ../api-functional/phpunit.xml
-#COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
-#
-## Integration
-#COPY install-config-mysql.integration.php ../integration/etc/install-config-mysql.php
-#COPY phpunit.integration.xml ../integration/phpunit.xml
-#
-## Back
-#RUN rm -rf /var/www/.composer
-#WORKDIR /var/www/html
+
+# API Functional
+COPY phpunit.api.xml ../api-functional/phpunit.xml
+COPY install-config-mysql.php ../api-functional/config/install-config-mysql.php
+
+# Integration
+COPY install-config-mysql.integration.php ../integration/etc/install-config-mysql.php
+COPY phpunit.integration.xml ../integration/phpunit.xml
+
+# Back
+RUN rm -rf /var/www/.composer
+WORKDIR /var/www/html
 
 STOPSIGNAL SIGTERM
 
