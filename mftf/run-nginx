@@ -36,6 +36,7 @@ MAGENTO_CMD+='&& php bin/magento config:set admin/security/use_form_key 0 '
 MAGENTO_CMD+='&& php bin/magento config:set admin/captcha/enable 0 '
 MAGENTO_CMD+='&& php bin/magento config:set admin/security/session_lifetime 86400 '
 MAGENTO_CMD+="&& php bin/magento config:set admin/security/password_lifetime '' "
+MAGENTO_CMD+="&& php bin/magento config:set web/seo/use_rewrites 1 "
 MAGENTO_CMD+="&& php bin/magento setup:store-config:set --base-url=$BASE_URL "
 MAGENTO_CMD+='&& php bin/magento cache:enable webpos '
 MAGENTO_CMD+='&& php bin/magento cache:clean config full_page '
