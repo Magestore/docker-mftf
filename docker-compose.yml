@@ -34,7 +34,7 @@ services:
       - apache2-foreground
 
   selenium:
-    image: magestore/mftf-selenium-chrome
+    image: magestore/mftf-selenium-chrome:chrome_79
     ports:
       - 5900:5900
     volumes:
