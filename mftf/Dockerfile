@@ -104,9 +104,13 @@ RUN set -ex \
             vendor/codeception/codeception/codecept \
             vendor/consolidation/robo/robo;" \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
-        " chmod -R +x vendor/bin && vendor/bin/mftf build:project"
+        " chmod -R +x vendor/bin && vendor/bin/mftf build:project" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " sed -i 's/restart: true/restart: false/g' dev/tests/acceptance/tests/functional.suite.yml; \
+        sed -i 's/pageload_timeout: 30/pageload_timeout: 15/g' dev/tests/acceptance/tests/functional.suite.yml; \
+        sed -i 's/\"--disable-gpu\", //g' dev/tests/acceptance/tests/functional.suite.yml;"
 
-COPY .env dev/tests/acceptance/.env
+COPY --chown=www-data:www-data .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
 RUN mv dev/tests/acceptance/.htaccess.sample dev/tests/acceptance/.htaccess && update-ca-certificates
 
