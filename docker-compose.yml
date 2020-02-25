@@ -34,9 +34,9 @@ services:
       - apache2-foreground
 
   selenium:
-    image: magestore/mftf-selenium-chrome
+    image: magestore/mftf-selenium-chrome:chrome_79
     ports:
-     - 5900:5900
+      - 5900:5900
     volumes:
       - /dev/shm:/dev/shm
     networks:
@@ -50,6 +50,8 @@ services:
   db:
 #    build: ./db
     image: 192.168.130.18:5000/mftf-db:ee-2.3.4-percona
+    volumes:
+      - ./db/conf.d:/etc/my.cnf.d
     environment:
       MYSQL_ROOT_PASSWORD: magento
       MYSQL_DATABASE: magento
