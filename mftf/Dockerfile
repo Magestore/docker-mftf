@@ -170,11 +170,11 @@ RUN chmod +x /usr/local/bin/run-nginx
 WORKDIR /var/www/html
 
 # Prepare Magento 2.3 downloaded from magento released
-COPY CE/2.3.4.tar.bz2 magento.tar.bz2
+COPY EE/2.3.4.zip magento.zip
 RUN set -ex \
     && mkdir -p /var/www/html && chown -R "$WEB_USER" /var/www/html \
-    && su "$WEB_USER" -s /bin/bash -c 'tar jxf magento.tar.bz2' \
-    && rm magento.tar.bz2
+    && su "$WEB_USER" -s /bin/bash -c 'unzip magento.zip' \
+    && rm magento.zip
 
 # Prepare acceptance test
 RUN set -ex \
