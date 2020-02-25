@@ -18,7 +18,7 @@ services:
           - localhost.com
 
   functional:
-    image: magestore/mftf:2.2.4
+    image: 192.168.130.18:5000/mftf:ee-2.3.4-apache-php7.2
     volumes:
       - ./app/code:/var/www/html/app/code
       - ./app/allure/allure-results:/allure-results
