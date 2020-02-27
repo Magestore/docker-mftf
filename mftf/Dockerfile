@@ -108,7 +108,9 @@ RUN set -ex \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
         " sed -i 's/restart: true/restart: false/g' dev/tests/acceptance/tests/functional.suite.yml; \
         sed -i 's/pageload_timeout: 30/pageload_timeout: 15/g' dev/tests/acceptance/tests/functional.suite.yml; \
-        sed -i 's/\"--disable-gpu\", //g' dev/tests/acceptance/tests/functional.suite.yml;"
+        sed -i 's/\"--disable-gpu\", //g' dev/tests/acceptance/tests/functional.suite.yml;" \
+    && su "$APACHE_RUN_USER" -s /bin/bash -c \
+        " sed -i \"s/'return \!\!window\.jQuery \&\& window\.jQuery\.active == 0;'/'if \(window\.location\.href\.indexOf\(\\\"apps\/pos\\\"\) > -1\) return true; else return \!\!window\.jQuery \&\& window\.jQuery\.active == 0;'/g\" vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Module/MagentoWebDriver.php"
 
 COPY --chown=www-data:www-data .env dev/tests/acceptance/.env
 COPY rootCA.pem /usr/local/share/ca-certificates/local.crt
