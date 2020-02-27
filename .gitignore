@@ -5,3 +5,4 @@ mftf/Dockerfile.magento.build
 docker-compose.magento.build.yml
 .idea
 mftf/CE/
+mftf/EE/
