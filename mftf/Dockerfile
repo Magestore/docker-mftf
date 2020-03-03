@@ -107,7 +107,6 @@ RUN set -ex \
         " chmod -R +x vendor/bin && vendor/bin/mftf build:project" \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
         " sed -i 's/restart: true/restart: false/g' dev/tests/acceptance/tests/functional.suite.yml; \
-        sed -i 's/pageload_timeout: 30/pageload_timeout: 15/g' dev/tests/acceptance/tests/functional.suite.yml; \
         sed -i 's/\"--disable-gpu\", //g' dev/tests/acceptance/tests/functional.suite.yml;" \
     && su "$APACHE_RUN_USER" -s /bin/bash -c \
         " sed -i \"s/'return \!\!window\.jQuery \&\& window\.jQuery\.active == 0;'/'if \(window\.location\.href\.indexOf\(\\\"apps\/pos\\\"\) > -1\) return true; else return \!\!window\.jQuery \&\& window\.jQuery\.active == 0;'/g\" vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Module/MagentoWebDriver.php"
