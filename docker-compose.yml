@@ -2,7 +2,7 @@ version: '3'
 services:
   mftf:
 #    build: ./mftf
-    image: 192.168.130.18:5000/mftf:ee-2.3.4-apache-php7.2
+    image: 46.51.237.203:5000/mftf:ee-2.3.4-apache-php7.2
     volumes:
       - ./app/code:/var/www/html/app/code
 #      - ./app/tests/Magestore/PosSampleData:/var/www/html/app/code/Magestore/PosSampleData
@@ -18,7 +18,7 @@ services:
           - localhost.com
 
   functional:
-    image: 192.168.130.18:5000/mftf:ee-2.3.4-apache-php7.2
+    image: 46.51.237.203:5000/mftf:ee-2.3.4-apache-php7.2
     volumes:
       - ./app/code:/var/www/html/app/code
       - ./app/allure/allure-results:/allure-results
@@ -49,7 +49,7 @@ services:
 
   db:
 #    build: ./db
-    image: 192.168.130.18:5000/mftf-db:ee-2.3.4-percona
+    image: 46.51.237.203:5000/mftf-db:ee-2.3.4-percona
     volumes:
       - ./db/conf.d:/etc/my.cnf.d
     environment:
